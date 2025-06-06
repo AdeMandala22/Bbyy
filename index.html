@@ -295,7 +295,28 @@
     skipMessageBtn.addEventListener('click', () => { currentMessageIdx = messages.length - 1; displayMessage(); });
 
     // --- Logik Galeri (DIPERBAIKI) ---
-    const galleryImages = [ { src: "assets/1.jpg", caption: "" }, { src: "assets/2.jpg", caption: "" }, { src: "assets/3.jpg", caption: "" }, { src: "assets/4.jpg", caption: "" }, { src: "assets/5.jpg", caption: "" }, { src: "assets/6.jpg", caption: "" }, { src: "assets/7.jpg", caption: "" }, { src: "assets/8.jpg", caption: "" }, { src: "assets/9.jpg", caption: "" }, { src: "assets/10.jpg", caption: "" }, { src: "assets/11.jpg", caption: "" }, { src: "assets/12.jpg", caption: "" }, { src: "assets/13.jpg", caption: "" }, { src: "assets/14.jpg", caption: "" }, { src: "assets/15.jpg", caption: "" } ];
+    const galleryImages = [ { src: "assets/1.jpg", caption: "" }, 
+                           { src: "assets/2.jpg", caption: "" }, 
+                           { src: "assets/3.jpg", caption: "" }, 
+                           { src: "assets/4.jpg", caption: "" }, 
+                           { src: "assets/5.jpg", caption: "" }, 
+                           { src: "assets/6.jpg", caption: "" },
+                           { src: "assets/7.jpg", caption: "" }, 
+                           { src: "assets/8.jpg", caption: "" },
+                           { src: "assets/9.jpg", caption: "" },
+                           { src: "assets/10.jpg", caption: "" }, 
+                           { src: "assets/11.jpg", caption: "" },
+                           { src: "assets/12.jpg", caption: "" }, 
+                           { src: "assets/13.jpg", caption: "" }, 
+                           { src: "assets/14.jpg", caption: "" },
+                           { src: "assets/15.jpg", caption: "" } 
+                            // Tambahan video dari Google Drive
+  {
+    isVideo: true,
+    embedUrl: "https://drive.google.com/file/d/19m5TIGXGlVbp-oSdvgs4VpEn3a9SWDyJ/preview",
+    caption: "Bonus"
+    }
+                          ];
     let currentImageIdx = 0;
     const galleryImageEl = document.getElementById('galleryImage');
     const galleryCounterEl = document.getElementById('galleryCounter');
