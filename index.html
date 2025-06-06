@@ -296,12 +296,12 @@
     }
 
     // --- Logik Mesej ---
-    const messages = [ "Hai Sayang, Selamat Ulang Tahun ya!", "Semoga panjang umur, sehat selalu...", "Tambah dewasa, tambah bijaksana...", "Semua doa terbaik untukmu!", "I have a little suprise...", "CIEEEE KEPO YAAA WKWKW", "Pokoknya, HAPPY BIRTHDAY!", "I Love You! ;)", "Udah ya, itu aja pesannya. Hehe." ];
+    const messages = [ "Hai Sayang, Selamat Ulang Tahun ya!", "Semoga panjang umur, sehat selalu...", "Tambah dewasa, tambah bijaksana...", "Semua doa terbaik untukmu!", "I have a little suprise...", "CIEEEE KEPO YAAA WKWKW", "Pokoknya, HAPPY BIRTHDAY!", "I Love You! ;)", "Udah ya, itu aja pesannya. Kadonya nyusul yaa, Hehe. yopyuuu" ];
     let currentMessageIdx = 0;
     const messageContentEl = document.getElementById('message-content');
     const nextMessageBtn = document.getElementById('nextMessageBtn');
     const skipMessageBtn = document.getElementById('skipMessageBtn');
-    function displayMessage() { if (currentMessageIdx < messages.length) { messageContentEl.textContent = messages[currentMessageIdx]; } else { messageContentEl.textContent = "Selesai!"; nextMessageBtn.style.display = 'none'; skipMessageBtn.style.display = 'none';}}
+    function displayMessage() { if (currentMessageIdx < messages.length) { messageContentEl.textContent = messages[currentMessageIdx]; } else { messageContentEl.textContent = ""; nextMessageBtn.style.display = 'none'; skipMessageBtn.style.display = 'none';}}
     function startMessages() { currentMessageIdx = 0; nextMessageBtn.style.display = 'block'; skipMessageBtn.style.display = 'block'; displayMessage(); }
     nextMessageBtn.addEventListener('click', () => { currentMessageIdx++; displayMessage(); });
     skipMessageBtn.addEventListener('click', () => { currentMessageIdx = messages.length; displayMessage(); });
