@@ -1,328 +1,206 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Happy Birthday!</title>
+  <title>Happy Birthday</title>
   <style>
     * {
+      margin: 0;
+      padding: 0;
       box-sizing: border-box;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
     }
     body {
-      margin: 0;
-      background-color: #000;
-      color: #0f0;
-      font-family: 'Courier New', Courier, monospace;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      overflow: hidden;
+      background: #ffe6f0;
+      color: #333;
+      overflow-x: hidden;
     }
-
-    .screen {
-      border: 10px solid #0f0;
-      padding: 20px;
-      width: 90%;
-      max-width: 400px;
-      aspect-ratio: 4 / 3;
-      position: relative;
-      box-shadow: 0 0 20px #0f0;
-      background-color: #000;
-    }
-
-    .top-bar {
-      text-align: center;
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
-
-    .display {
-      white-space: pre-line;
-      line-height: 1.5;
-      font-size: 1em;
-      text-align: center;
-      height: 160px;
-      overflow-y: auto;
-    }
-
-    .controls {
-      margin-top: 20px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      text-align: center;
-    }
-
-    .btn {
-      border: 2px solid #0f0;
-      padding: 10px;
-      cursor: pointer;
-      transition: background 0.2s;
-      user-select: none;
-    }
-
-    .btn:hover {
-      background-color: #0f0;
-      color: #000;
-    }
-
-    .footer {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.7em;
-      opacity: 0.6;
-    }
-
-    ::-webkit-scrollbar {
+    .page {
       display: none;
+      padding: 20px;
+      text-align: center;
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
-
-    img.gallery-img {
-      max-width: 100%;
-      max-height: 120px;
-      margin-top: 10px;
+    .show {
+      display: flex;
     }
-
-    canvas.tetris {
-      margin-top: 10px;
-      image-rendering: pixelated;
+    button {
+      background: #ff85a2;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
     }
-
-    /* Swipe Gesture Support */
-    .swipe-area {
-      touch-action: pan-y;
+    .typing-text {
+      font-size: 24px;
+      white-space: pre-wrap;
+      border-right: 2px solid black;
+      width: 90%;
+      max-width: 500px;
+      margin: auto;
+      text-align: left;
+      min-height: 150px;
+    }
+    .gallery img {
+      width: 90%;
+      max-width: 300px;
+      border-radius: 12px;
+      margin: 10px 0;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      animation: fadeIn 1s ease;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
     }
   </style>
 </head>
-<body class="swipe-area">
+<body>
 
-  <div class="screen">
-    <div class="top-bar">POWER • HEYTML-BOY</div>
-    <div class="display" id="mainDisplay"></div>
-    <div class="controls">
-      <div></div>
-      <div class="btn" onclick="navigate('↑')">↑</div>
-      <div></div>
-      <div class="btn" onclick="navigate('←')">←</div>
-      <div class="btn" onclick="navigate('START')">START</div>
-      <div class="btn" onclick="navigate('→')">→</div>
-      <div class="btn" onclick="navigate('SELECT')">SELECT</div>
-      <div class="btn" onclick="navigate('↓')">↓</div>
-      <div class="btn" onclick="navigate('B')">B</div>
+  <!-- Background music -->
+  <audio id="bg-music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+
+  <!-- Page 1: Intro -->
+  <div id="page1" class="page show">
+    <div>
+      <h2>Hai, aku punya sesuatu buat kamu 💌</h2>
+      <button onclick="nextPage(2)">Buka Surat</button>
     </div>
-    <div class="footer">Message • Gallery • Music • Tetris</div>
   </div>
 
-  <!-- Audio -->
-  <audio id="bgMusic"></audio>
+  <!-- Page 2: Surat Ucapan -->
+  <div id="page2" class="page">
+    <div>
+      <p class="typing-text" id="message"></p>
+      <button onclick="nextPage(3)">Lanjut</button>
+    </div>
+  </div>
+
+  <!-- Page 3: Galeri Foto -->
+  <div id="page3" class="page">
+    <h2>Kenangan Kita 📸</h2>
+    <div class="gallery">
+      <img src="https://placekitten.com/300/200" alt="Foto 1">
+      <img src="https://placekitten.com/301/200" alt="Foto 2">
+      <img src="https://placekitten.com/302/200" alt="Foto 3">
+    </div>
+    <button onclick="showEnding()">Selesai</button>
+  </div>
+
+  <!-- Page 4: Akhir -->
+  <div id="page4" class="page">
+    <h2>Semoga kamu suka ya 💖</h2>
+    <p>Terima kasih sudah jadi bagian penting dalam hidupku.</p>
+  </div>
+
+  <!-- Confetti -->
+  <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
 
   <script>
-    const pages = [
-      `HAPPY BIRTHDAY!
-Press Start Button
-DOT MATRIX WITH STEREO SOUND
-BATTERY`,
-      `Heytml-Birthday
-Wish you a very happy birthday!
-Hope this little gift brings smile to your face 😊
-From: Your Friend`,
-      `[GALLERY]
-Swipe or use ← → to view photos`,
-      `[MUSIC]
-🎵 Press START to Play Song 🎵
-Use ↑ ↓ to change track`,
-      `[TETRIS]
-Classic Tetris
-Use Arrow Keys to play!
-Press B to rotate block`
-    ];
+    // Musik latar
+    window.addEventListener('click', () => {
+      const music = document.getElementById('bg-music');
+      if (music.paused) music.play();
+    });
 
-    let currentPage = 0;
-    let galleryIndex = 0;
-    let currentTrack = 0;
+    // Navigasi halaman
+    function nextPage(n) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+      document.getElementById('page' + n).classList.add('show');
 
-    const galleryImages = [
-      "https://via.placeholder.com/200x120?text=Photo+1",
-      "https://via.placeholder.com/200x120?text=Photo+2",
-      "https://via.placeholder.com/200x120?text=Photo+3"
-    ];
-
-    const musicTracks = [
-      "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-      "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-      "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-    ];
-
-    // TETRIS MINI
-    let tetrisCtx, tetrisCanvas;
-    let tetrisBoard = createBoard(10, 20);
-    let currentPiece;
-
-    function createBoard(w, h) {
-      return Array.from({ length: h }, () => Array(w).fill(0));
+      if (n === 2) startTyping();
     }
 
-    function drawBoard(ctx, board) {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      for (let y = 0; y < board.length; y++) {
-        for (let x = 0; x < board[y].length; x++) {
-          if (board[y][x]) {
-            ctx.fillStyle = "#0f0"; 
-            ctx.fillRect(x * 10, y * 10, 10, 10);
-          }
+    function showEnding() {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
+      document.getElementById('page4').classList.add('show');
+    }
+
+    // Animasi teks ketik
+    const message = `Selamat ulang tahun! 🎉\n\nSemoga hari-harimu selalu dipenuhi kebahagiaan dan cinta.\nTerima kasih sudah menjadi kamu yang luar biasa.`;
+    let index = 0;
+    function startTyping() {
+      const el = document.getElementById('message');
+      el.innerHTML = '';
+      index = 0;
+      const type = () => {
+        if (index < message.length) {
+          el.innerHTML += message.charAt(index);
+          index++;
+          setTimeout(type, 50);
         }
-      }
+      };
+      type();
     }
 
-    function spawnPiece() {
-      currentPiece = [[1,1,1],[0,1,0]]; // T-shape
-      currentPiece.x = 3;
-      currentPiece.y = 0;
-    }
+    // Confetti animation
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confetti = [];
 
-    function move(dx, dy) {
-      currentPiece.x += dx;
-      currentPiece.y += dy;
-      draw();
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-    function rotate() {
-      const rotated = currentPiece.map((_, i) =>
-        currentPiece.map(row => row[i]).reverse()
-      );
-      currentPiece = rotated;
-      draw();
-    }
-
-    function draw() {
-      let boardCopy = tetrisBoard.map(row => [...row]);
-      currentPiece.forEach((row, y) => {
-        row.forEach((val, x) => {
-          if (val) {
-            boardCopy[y + currentPiece.y]?.[x + currentPiece.x] = 1;
-          }
+    function createConfetti() {
+      for (let i = 0; i < 150; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 50 + 10,
+          color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+          tilt: Math.random() * 10 - 10,
+          tiltAngleIncrement: Math.random() * 0.07 + 0.05,
+          tiltAngle: 0
         });
+      }
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach(c => {
+        ctx.beginPath();
+        ctx.lineWidth = c.r;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.d / 2);
+        ctx.stroke();
       });
-      drawBoard(tetrisCtx, boardCopy);
+      updateConfetti();
     }
 
-    function setupTetris(displayEl) {
-      const canvas = document.createElement("canvas");
-      canvas.width = 100;
-      canvas.height = 200;
-      canvas.className = "tetris";
-      tetrisCanvas = canvas;
-      tetrisCtx = canvas.getContext("2d");
-      displayEl.appendChild(canvas);
-      spawnPiece();
-      draw();
-      document.addEventListener("keydown", e => {
-        if (currentPage !== 4) return;
-        switch(e.key) {
-          case "ArrowLeft": move(-1, 0); break;
-          case "ArrowRight": move(1, 0); break;
-          case "ArrowDown": move(0, 1); break;
-          case "b": rotate(); break;
+    function updateConfetti() {
+      confetti.forEach(c => {
+        c.tiltAngle += c.tiltAngleIncrement;
+        c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
+        c.tilt = Math.sin(c.tiltAngle - c.d / 3) * 15;
+
+        if (c.y > canvas.height) {
+          c.y = -10;
+          c.x = Math.random() * canvas.width;
         }
       });
     }
 
-    function navigate(button) {
-      const display = document.getElementById("mainDisplay");
-      const audio = document.getElementById("bgMusic");
-
-      switch (currentPage) {
-        case 0:
-          if (button === "START") {
-            currentPage = 1;
-            typeWriter(pages[currentPage], 0, display);
-          }
-          break;
-        case 2:
-          if (button === "←") {
-            galleryIndex = (galleryIndex - 1 + galleryImages.length) % galleryImages.length;
-            showGallery(display);
-          } else if (button === "→") {
-            galleryIndex = (galleryIndex + 1) % galleryImages.length;
-            showGallery(display);
-          }
-          break;
-        case 3:
-          if (button === "START") {
-            currentTrack = 0;
-            audio.src = musicTracks[currentTrack];
-            audio.play();
-            alert("Playing Track 1");
-          } else if (button === "↑") {
-            currentTrack = (currentTrack - 1 + musicTracks.length) % musicTracks.length;
-            audio.src = musicTracks[currentTrack];
-            audio.play();
-            alert(`Now Playing Track ${currentTrack + 1}`);
-          } else if (button === "↓") {
-            currentTrack = (currentTrack + 1) % musicTracks.length;
-            audio.src = musicTracks[currentTrack];
-            audio.play();
-            alert(`Now Playing Track ${currentTrack + 1}`);
-          }
-          break;
-        case 4:
-          if (button === "B") rotate();
-          break;
-      }
-
-      if (button === "SELECT") {
-        currentPage = (currentPage + 1) % pages.length;
-        display.innerHTML = "";
-        if (currentPage === 4 && !tetrisCanvas) {
-          setupTetris(display);
-        }
-        if (currentPage === 2) {
-          showGallery(display);
-        } else {
-          typeWriter(pages[currentPage], 0, display);
-        }
-      }
+    function animate() {
+      drawConfetti();
+      requestAnimationFrame(animate);
     }
 
-    function showGallery(display) {
-      display.innerHTML = pages[2] + `<br><img class="gallery-img" src="${galleryImages[galleryIndex]}" />`;
-    }
-
-    function typeWriter(text, i, element) {
-      if (i === 0) element.textContent = "";
-      if (i < text.length) {
-        element.textContent += text.charAt(i);
-        setTimeout(() => typeWriter(text, i + 1, element), 50);
-      }
-    }
-
-    // Swipe gesture support
-    let startX = null;
-    document.addEventListener("touchstart", e => {
-      startX = e.touches[0].clientX;
-    });
-
-    document.addEventListener("touchend", e => {
-      if (startX !== null && currentPage === 2) {
-        const endX = e.changedTouches[0].clientX;
-        if (endX - startX > 50) {
-          galleryIndex = (galleryIndex - 1 + galleryImages.length) % galleryImages.length;
-          showGallery(document.getElementById("mainDisplay"));
-        } else if (startX - endX > 50) {
-          galleryIndex = (galleryIndex + 1) % galleryImages.length;
-          showGallery(document.getElementById("mainDisplay"));
-        }
-        startX = null;
-      }
-    });
-
-    window.onload = () => {
-      const display = document.getElementById("mainDisplay");
-      typeWriter(pages[currentPage], 0, display);
-    };
+    createConfetti();
+    animate();
   </script>
 </body>
 </html>
