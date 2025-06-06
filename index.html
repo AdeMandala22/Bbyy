@@ -323,8 +323,8 @@
                 <p class="text-xs text-center mb-1" id="gallery-title">HEYML PHOTOSBOX</p>
                 <img id="galleryImage" 
                      src="https://placehold.co/150x100/25392b/9effae?text=Memuat..." 
-                     alt="Foto Galeri" 
-                     onerror="this.src='https://placehold.co/150x100/ef4444/ffffff?text=Error+Muat'; this.alt='Gagal memuat gambar. Periksa FILE_ID dan izin Google Drive.'; console.error('Gagal memuat gambar:', this.src);">
+                     alt="Foto Galeri">
+                     <!-- onerror akan ditetapkan oleh JavaScript -->
                 <p id="galleryCounter" class="text-xs text-center my-1">Mencetak foto 1 dari 4...</p>
                 <button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>
                 <button id="printImageBtn" class="nav-button btn-skip">Mulai Cetak</button>
@@ -484,14 +484,13 @@
     });
 
     // --- Gallery Logic ---
-    // PENTING: GANTI "FILE_ID_ANDA_X" DENGAN ID FILE GOOGLE DRIVE ANDA YANG SEBENARNYA!
+    // PENTING: GANTI "GANTI_DENGAN_FILE_ID_GAMBAR_X_ANDA" DENGAN ID FILE GOOGLE DRIVE ANDA YANG SEBENARNYA!
     // PASTIKAN JUGA PENGATURAN BERBAGI DI GOOGLE DRIVE ADALAH "SIAPA SAJA YANG MEMILIKI LINK" DAPAT "MELIHAT".
     const galleryImages = [
         { src: "https://drive.google.com/uc?export=view&id=19QtbDLrCDx8S0q-x_H2bAcfLxSjlkj9I", caption: "Gambar 1 dari Drive" },
         { src: "https://drive.google.com/uc?export=view&id=19RofJYvdvfppmHKlJVBzP_rUalu6Ihzc", caption: "Gambar 2 dari Drive" },
         { src: "https://drive.google.com/uc?export=view&id=19KLG-Ea-mWw96Xe2Ts8B8HdYSrWlayc0", caption: "Gambar 3 dari Drive" },
-        // Anda bisa menambahkan lebih banyak gambar di sini
-        { src: "https://placehold.co/150x100/22c55e/ffffff?text=Contoh+Sukses", caption: "Contoh Gambar Placeholder" } // Ini akan selalu berhasil dimuat untuk tes
+        { src: "https://placehold.co/150x100/22c55e/ffffff?text=Contoh+Sukses", caption: "Contoh Gambar Placeholder" }
     ];
     let currentImageIdx = 0;
     const galleryImageEl = document.getElementById('galleryImage');
@@ -504,27 +503,43 @@
         if (galleryImages.length === 0) {
             galleryImageEl.src = 'https://placehold.co/150x100/25392b/9effae?text=Galeri+Kosong';
             galleryImageEl.alt = 'Galeri Kosong';
+            galleryImageEl.onerror = null; // Tidak perlu error handling untuk placeholder ini
             galleryCounterEl.textContent = "Tidak ada foto di galeri.";
             console.log("Galeri kosong, menampilkan placeholder galeri kosong.");
             return;
         }
+
         const imgData = galleryImages[currentImageIdx];
-        console.log("Mencoba memuat gambar:", imgData.src); // Untuk debugging di console browser
-        galleryImageEl.src = imgData.src; 
-        galleryImageEl.alt = imgData.caption;
+        const originalSrc = imgData.src; // Simpan URL asli
+
+        console.log("Mencoba memuat gambar (URL asli):", originalSrc); 
+        
+        // Tetapkan pengendali onload dan onerror SEBELUM menetapkan src
+        galleryImageEl.onload = function() {
+            console.log("Berhasil memuat gambar:", this.src);
+            this.alt = imgData.caption; // Kemas kini alt text pada kejayaan muat
+        };
+        
+        galleryImageEl.onerror = function() {
+            // 'this' merujuk kepada elemen img di sini
+            console.error('GAGAL memuat URL asli yang dimaksud:', originalSrc, '. Menampilkan placeholder error final.');
+            this.src = 'https://placehold.co/150x100/FF0000/FFFFFF?text=GAGAL+MUAT'; // Placeholder error yang berbeza
+            this.alt = 'Gagal memuat gambar. URL asli: ' + originalSrc + '. Periksa FILE_ID dan izin Google Drive.';
+            // Penting: Alih keluar onerror untuk mengelakkan gelung tak terbatas jika placeholder error juga gagal
+            this.onerror = null; 
+        };
+        
+        galleryImageEl.src = originalSrc; // Sekarang tetapkan src yang mungkin gagal
+        galleryImageEl.alt = "Memuat: " + imgData.caption; // Alt text awal semasa memuat
         galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
     }
 
+
     function startGallery() {
         currentImageIdx = 0;
-        // Set src awal sebelum displayImage dipanggil agar onerror berfungsi jika gambar pertama juga gagal
-        if (galleryImages.length > 0) {
-            galleryImageEl.src = galleryImages[0].src; 
-        } else {
-             galleryImageEl.src = 'https://placehold.co/150x100/25392b/9effae?text=Galeri+Kosong';
-        }
-        displayImage();
+        displayImage(); // displayImage akan mengendalikan src awal dan onerror
     }
+
     nextImageBtn.addEventListener('click', () => {
         playClickSound();
         if (galleryImages.length > 0) {
@@ -532,6 +547,7 @@
             displayImage();
         }
     });
+
     printImageBtn.addEventListener('click', () => {
         playClickSound();
         if (galleryImages.length > 0) {
