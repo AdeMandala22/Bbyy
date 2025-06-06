@@ -1,206 +1,342 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Happy Birthday</title>
+  <title>Happy Birthday!</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-    }
     body {
-      background: #ffe6f0;
-      color: #333;
-      overflow-x: hidden;
-    }
-    .page {
-      display: none;
-      padding: 20px;
-      text-align: center;
-      min-height: 100vh;
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
     }
-    .show {
-      display: flex;
+
+    .screen {
+      border: 5px solid #00ff00;
+      padding: 20px;
+      max-width: 600px;
+      text-align: center;
     }
-    button {
-      background: #ff85a2;
-      border: none;
-      color: white;
-      padding: 12px 20px;
-      font-size: 18px;
-      border-radius: 8px;
-      margin-top: 20px;
+
+    .console-buttons button {
+      background: none;
+      border: 2px solid #00ff00;
+      color: #00ff00;
+      padding: 10px 20px;
+      margin: 5px;
       cursor: pointer;
-      box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: 0.3s;
     }
-    .typing-text {
-      font-size: 24px;
-      white-space: pre-wrap;
-      border-right: 2px solid black;
-      width: 90%;
-      max-width: 500px;
-      margin: auto;
-      text-align: left;
-      min-height: 150px;
+
+    .console-buttons button:hover {
+      background-color: #00ff00;
+      color: black;
     }
-    .gallery img {
-      width: 90%;
-      max-width: 300px;
-      border-radius: 12px;
-      margin: 10px 0;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      animation: fadeIn 1s ease;
+
+    .section {
+      margin-top: 20px;
+      font-size: 1rem;
     }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(20px);}
-      to {opacity: 1; transform: translateY(0);}
+
+    .hidden {
+      display: none;
+    }
+
+    .carousel img {
+      display: none;
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+    }
+
+    .carousel img.active {
+      display: block;
+    }
+
+    .controls-gallery button {
+      background: none;
+      border: 1px solid #00ff00;
+      color: #00ff00;
+      padding: 5px 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .console-controls {
+      margin-top: 20px;
+    }
+
+    canvas {
+      background-color: #000;
+      display: block;
+      margin: 10px auto;
     }
   </style>
 </head>
 <body>
+  <div class="screen">
+    <h1>HAPPY BIRTHDAY!</h1>
 
-  <!-- Background music -->
-  <audio id="bg-music" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" loop></audio>
+    <div class="console-buttons">
+      <button onclick="showSection('message')">MESSAGE</button>
+      <button onclick="showSection('gallery')">GALLERY</button>
+      <button onclick="showSection('music')">MUSIC</button>
+      <button onclick="showSection('tetris')">TETRIS</button>
+    </div>
 
-  <!-- Page 1: Intro -->
-  <div id="page1" class="page show">
-    <div>
-      <h2>Hai, aku punya sesuatu buat kamu 💌</h2>
-      <button onclick="nextPage(2)">Buka Surat</button>
+    <!-- MESSAGE -->
+    <div id="message" class="section">
+      <p>Selamat ulang tahun yang keberapa ya? Semoga hari ini dan tahun-tahun berikutnya dipenuhi tawa, kebahagiaan, dan banyak kado 🎁🎉</p>
+    </div>
+
+    <!-- GALLERY -->
+    <div id="gallery" class="section hidden">
+      <div class="carousel">
+        <img src="https://via.placeholder.com/400x300?text=Photo+1" alt="Photo 1" class="active">
+        <img src="https://via.placeholder.com/400x300?text=Photo+2" alt="Photo 2">
+        <img src="https://via.placeholder.com/400x300?text=Photo+3" alt="Photo 3">
+      </div>
+      <div class="controls-gallery">
+        <button onclick="prevImage()">⬅️</button>
+        <button onclick="nextImage()">➡️</button>
+      </div>
+    </div>
+
+    <!-- MUSIC -->
+    <div id="music" class="section hidden">
+      <audio id="birthday-music" controls autoplay loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        Browser tidak mendukung audio.
+      </audio>
+      <p>Musik dimainkan secara otomatis. Enjoy! 🎶</p>
+    </div>
+
+    <!-- TETRIS -->
+    <div id="tetris" class="section hidden">
+      <canvas id="tetris-canvas" width="200" height="400"></canvas>
+      <p>Kontrol: ↑ untuk rotasi, ← → untuk gerak, ↓ untuk jatuhkan.</p>
+    </div>
+
+    <div class="console-controls">
+      <div class="arrows">↑ ↓ ← →</div>
+      <div>B &nbsp;&nbsp;A</div>
+      <div>SELECT &nbsp;START</div>
     </div>
   </div>
-
-  <!-- Page 2: Surat Ucapan -->
-  <div id="page2" class="page">
-    <div>
-      <p class="typing-text" id="message"></p>
-      <button onclick="nextPage(3)">Lanjut</button>
-    </div>
-  </div>
-
-  <!-- Page 3: Galeri Foto -->
-  <div id="page3" class="page">
-    <h2>Kenangan Kita 📸</h2>
-    <div class="gallery">
-      <img src="https://placekitten.com/300/200" alt="Foto 1">
-      <img src="https://placekitten.com/301/200" alt="Foto 2">
-      <img src="https://placekitten.com/302/200" alt="Foto 3">
-    </div>
-    <button onclick="showEnding()">Selesai</button>
-  </div>
-
-  <!-- Page 4: Akhir -->
-  <div id="page4" class="page">
-    <h2>Semoga kamu suka ya 💖</h2>
-    <p>Terima kasih sudah jadi bagian penting dalam hidupku.</p>
-  </div>
-
-  <!-- Confetti -->
-  <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;"></canvas>
 
   <script>
-    // Musik latar
-    window.addEventListener('click', () => {
-      const music = document.getElementById('bg-music');
-      if (music.paused) music.play();
-    });
-
-    // Navigasi halaman
-    function nextPage(n) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
-      document.getElementById('page' + n).classList.add('show');
-
-      if (n === 2) startTyping();
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
     }
 
-    function showEnding() {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('show'));
-      document.getElementById('page4').classList.add('show');
+    let currentImageIndex = 0;
+
+    function updateGallery() {
+      const images = document.querySelectorAll('#gallery img'); 
+      images.forEach((img, i) => {
+        img.classList.toggle('active', i === currentImageIndex);
+      });
     }
 
-    // Animasi teks ketik
-    const message = `Selamat ulang tahun! 🎉\n\nSemoga hari-harimu selalu dipenuhi kebahagiaan dan cinta.\nTerima kasih sudah menjadi kamu yang luar biasa.`;
-    let index = 0;
-    function startTyping() {
-      const el = document.getElementById('message');
-      el.innerHTML = '';
-      index = 0;
-      const type = () => {
-        if (index < message.length) {
-          el.innerHTML += message.charAt(index);
-          index++;
-          setTimeout(type, 50);
+    function nextImage() {
+      currentImageIndex = (currentImageIndex + 1) % document.querySelectorAll('#gallery img').length;
+      updateGallery();
+    }
+
+    function prevImage() {
+      currentImageIndex = (currentImageIndex - 1 + document.querySelectorAll('#gallery img').length) % document.querySelectorAll('#gallery img').length;
+      updateGallery();
+    }
+
+    // Init gallery
+    updateGallery();
+
+    // Tetris Game Logic
+    const canvas = document.getElementById('tetris-canvas');
+    const context = canvas.getContext('2d');
+
+    context.scale(20, 20);
+
+    function arenaSweep() {
+      let rowCount = 1;
+      outer: for (let y = arena.length - 1; y >= 0; --y) {
+        for (let x = 0; x < arena[y].length; ++x) {
+          if (arena[y][x] === 0) continue outer;
         }
-      };
-      type();
-    }
-
-    // Confetti animation
-    const canvas = document.getElementById('confetti-canvas');
-    const ctx = canvas.getContext('2d');
-    let confetti = [];
-
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function createConfetti() {
-      for (let i = 0; i < 150; i++) {
-        confetti.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height - canvas.height,
-          r: Math.random() * 6 + 4,
-          d: Math.random() * 50 + 10,
-          color: `hsl(${Math.random() * 360}, 100%, 70%)`,
-          tilt: Math.random() * 10 - 10,
-          tiltAngleIncrement: Math.random() * 0.07 + 0.05,
-          tiltAngle: 0
-        });
+        const row = arena.splice(y, 1)[0].fill(0);
+        arena.unshift(row);
+        ++y;
+        player.score += rowCount * 10;
+        rowCount *= 2;
       }
     }
 
-    function drawConfetti() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      confetti.forEach(c => {
-        ctx.beginPath();
-        ctx.lineWidth = c.r;
-        ctx.strokeStyle = c.color;
-        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
-        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.d / 2);
-        ctx.stroke();
-      });
-      updateConfetti();
-    }
-
-    function updateConfetti() {
-      confetti.forEach(c => {
-        c.tiltAngle += c.tiltAngleIncrement;
-        c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
-        c.tilt = Math.sin(c.tiltAngle - c.d / 3) * 15;
-
-        if (c.y > canvas.height) {
-          c.y = -10;
-          c.x = Math.random() * canvas.width;
+    function collide(arena, player) {
+      const m = player.matrix;
+      const o = player.pos;
+      for (let y = 0; y < m.length; ++y) {
+        for (let x = 0; x < m[y].length; ++x) {
+          if (m[y][x] !== 0 &&
+              (arena[y + o.y] &&
+               arena[y + o.y][x + o.x]) !== 0) {
+            return true;
+          }
         }
+      }
+      return false;
+    }
+
+    function createMatrix(w, h) {
+      const matrix = [];
+      while (h--) {
+        matrix.push(new Array(w).fill(0));
+      }
+      return matrix;
+    }
+
+    function createPiece(type) {
+      const pieces = {
+        T: [[0,1,0],[1,1,1],[0,0,0]],
+        O: [[2,2],[2,2]],
+        L: [[0,0,3],[3,3,3],[0,0,0]],
+        J: [[4,0,0],[4,4,4],[0,0,0]],
+        I: [[0,5,0,0],[0,5,0,0],[0,5,0,0],[0,5,0,0]],
+        S: [[0,6,6],[6,6,0],[0,0,0]],
+        Z: [[7,7,0],[0,7,7],[0,0,0]]
+      };
+      return pieces[type];
+    }
+
+    function drawMatrix(matrix, offset) {
+      matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (value !== 0) {
+            context.fillStyle = colors[value];
+            context.fillRect(x + offset.x, y + offset.y, 1, 1);
+          }
+        });
       });
     }
 
-    function animate() {
-      drawConfetti();
-      requestAnimationFrame(animate);
+    function merge(arena, player) {
+      player.matrix.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (value !== 0) {
+            arena[y + player.pos.y][x + player.pos.x] = value;
+          }
+        });
+      });
     }
 
-    createConfetti();
-    animate();
+    function rotate(matrix, dir) {
+      for (let y = 0; y < matrix.length; ++y) {
+        for (let x = 0; x < y; ++x) {
+          [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
+        }
+      }
+      if (dir > 0) matrix.forEach(row => row.reverse());
+      else matrix.reverse();
+    }
+
+    function playerDrop() {
+      player.pos.y++;
+      if (collide(arena, player)) {
+        player.pos.y--;
+        merge(arena, player);
+        playerReset();
+        arenaSweep();
+      }
+      dropCounter = 0;
+    }
+
+    function playerMove(dir) {
+      player.pos.x += dir;
+      if (collide(arena, player)) player.pos.x -= dir;
+    }
+
+    function playerReset() {
+      const types = 'TJLOSZI';
+      player.matrix = createPiece(types[Math.floor(Math.random() * types.length)]);
+      player.pos.y = 0;
+      player.pos.x = (arena[0].length / 2 | 0) - (player.matrix[0].length / 2 | 0);
+      if (collide(arena, player)) {
+        arena.forEach(row => row.fill(0));
+        player.score = 0;
+      }
+    }
+
+    function playerRotate(dir) {
+      const pos = player.pos.x;
+      let offset = 1;
+      rotate(player.matrix, dir);
+      while (collide(arena, player)) {
+        player.pos.x += offset;
+        offset = -(offset + (offset > 0 ? 1 : -1));
+        if (offset > player.matrix[0].length) {
+          rotate(player.matrix, -dir);
+          player.pos.x = pos;
+          return;
+        }
+      }
+    }
+
+    let dropCounter = 0;
+    let dropInterval = 1000;
+    let lastTime = 0;
+
+    function update(time = 0) {
+      const deltaTime = time - lastTime;
+      lastTime = time;
+      dropCounter += deltaTime;
+      if (dropCounter > dropInterval) {
+        playerDrop();
+      }
+      draw();
+      requestAnimationFrame(update);
+    }
+
+    function draw() {
+      context.fillStyle = '#000';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      drawMatrix(arena, {x:0, y:0});
+      drawMatrix(player.matrix, player.pos);
+    }
+
+    const colors = [
+      null,
+      '#FF0D72',
+      '#0DC2FF',
+      '#0DFF72',
+      '#F538FF',
+      '#FF8E0D',
+      '#FFE138',
+      '#3877FF',
+    ];
+
+    const arena = createMatrix(10, 20);
+    const player = {
+      pos: {x: 0, y: 0},
+      matrix: null,
+      score: 0,
+    };
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft') playerMove(-1);
+      else if (event.key === 'ArrowRight') playerMove(1);
+      else if (event.key === 'ArrowDown') playerDrop();
+      else if (event.key === 'ArrowUp') playerRotate(1);
+    });
+
+    playerReset();
+    update();
   </script>
 </body>
 </html>
