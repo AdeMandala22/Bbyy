@@ -240,6 +240,7 @@
             margin: 10px auto;
             display: block;
             object-fit: contain;
+            background-color: #1e2b22; /* Warna latar belakang jika gambar transparan atau lambat dimuat */
         }
 
         /* Music Player specific */
@@ -320,8 +321,10 @@
             <div id="gallery-screen" class="screen-content">
                 <h2 class="text-center text-lg mb-1">Galeri Foto</h2>
                 <p class="text-xs text-center mb-1" id="gallery-title">HEYML PHOTOSBOX</p>
-                <!-- Gambar akan dimuat oleh JavaScript. onerror untuk fallback jika link Google Drive bermasalah -->
-                <img id="galleryImage" src="" alt="Foto Galeri" onerror="this.src='https://placehold.co/150x100/25392b/9effae?text=Error+Muat'; this.alt='Gagal memuat gambar';">
+                <img id="galleryImage" 
+                     src="https://placehold.co/150x100/25392b/9effae?text=Memuat..." 
+                     alt="Foto Galeri" 
+                     onerror="this.src='https://placehold.co/150x100/ef4444/ffffff?text=Error+Muat'; this.alt='Gagal memuat gambar. Periksa FILE_ID dan izin Google Drive.'; console.error('Gagal memuat gambar:', this.src);">
                 <p id="galleryCounter" class="text-xs text-center my-1">Mencetak foto 1 dari 4...</p>
                 <button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>
                 <button id="printImageBtn" class="nav-button btn-skip">Mulai Cetak</button>
@@ -408,26 +411,6 @@
         'tetris-screen': document.getElementById('tetris-screen')
     };
     let currentVisibleScreen = 'home-screen';
-
-    // --- Sound Effects with Tone.js ---
-    // Efek suara berikut dialih keluar kerana URL sumber tidak dapat diakses
-    // const clickSound = new Tone.Player({
-    //     url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/Button-SoundBible.com-1420500901.mp3",
-    //     onload: () => console.log("Click sound loaded."),
-    //     onerror: (e) => console.error("Error loading click sound:", e)
-    // }).toDestination();
-
-    // const tetrisMoveSound = new Tone.Player({
-    //     url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/DM-CGS-21.mp3",
-    //     onload: () => console.log("Tetris move sound loaded."),
-    //     onerror: (e) => console.error("Error loading tetris move sound:", e)
-    // }).toDestination();
-
-    // const tetrisLineClearSound = new Tone.Player({
-    //     url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/tick_002.ogg",
-    //     onload: () => console.log("Tetris line clear sound loaded."),
-    //     onerror: (e) => console.error("Error loading tetris line clear sound:", e)
-    // }).toDestination();
     
     const musicPlayer = new Tone.Player({
         onload: () => console.log("Music file loaded into musicPlayer."),
@@ -436,20 +419,14 @@
 
     let musicSynth; 
 
-    // Fungsi playTonePlayerSound tidak lagi diperlukan jika semua pemain efek suara dialih keluar
-    // function playTonePlayerSound(playerInstance, soundName = "Sound") { ... }
-
-    // Fungsi untuk bunyi klik kini tidak melakukan apa-apa atau boleh diganti dengan alternatif jika ada
     function playClickSound() {
-        // console.log("Click sound (disabled)"); // Untuk debugging jika diperlukan
-        if (Tone.context.state !== 'running') { // Masih penting untuk memulakan konteks audio untuk musik
+        if (Tone.context.state !== 'running') { 
              Tone.start().catch(e => console.error("Error starting Tone.js for music:", e));
         }
     }
 
-
     function showScreen(screenId) {
-        playClickSound(); // Masih panggil untuk memulakan konteks Tone.js jika belum
+        playClickSound(); 
         if (screens[currentVisibleScreen]) {
             screens[currentVisibleScreen].classList.remove('active');
         }
@@ -507,12 +484,14 @@
     });
 
     // --- Gallery Logic ---
-    // GANTI FILE_ID_ANDA_1, FILE_ID_ANDA_2, DST DENGAN ID FILE GOOGLE DRIVE ANDA YANG SEBENARNYA
+    // PENTING: GANTI "FILE_ID_ANDA_X" DENGAN ID FILE GOOGLE DRIVE ANDA YANG SEBENARNYA!
+    // PASTIKAN JUGA PENGATURAN BERBAGI DI GOOGLE DRIVE ADALAH "SIAPA SAJA YANG MEMILIKI LINK" DAPAT "MELIHAT".
     const galleryImages = [
-        { src: "https://drive.google.com/uc?export=view&id=19QtbDLrCDx8S0q-x_H2bAcfLxSjlkj9I", caption: "Kenangan Pertama dari Drive" },
-        { src: "https://drive.google.com/uc?export=view&id=19RofJYvdvfppmHKlJVBzP_rUalu6Ihzc", caption: "Momen Lucu dari Drive" },
-        { src: "https://drive.google.com/uc?export=view&id=19KLG-Ea-mWw96Xe2Ts8B8HdYSrWlayc0", caption: "Jalan-Jalan dari Drive" },
-        { src: "https://placehold.co/150x100/8b5cf6/ffffff?text=Foto+Lokal", caption: "Foto Paling Spesial (Lokal)" } // Contoh jika ada yang bukan dari Drive
+        { src: "https://drive.google.com/uc?export=view&id=19QtbDLrCDx8S0q-x_H2bAcfLxSjlkj9I", caption: "Gambar 1 dari Drive" },
+        { src: "https://drive.google.com/uc?export=view&id=19RofJYvdvfppmHKlJVBzP_rUalu6Ihzc", caption: "Gambar 2 dari Drive" },
+        { src: "https://drive.google.com/uc?export=view&id=19KLG-Ea-mWw96Xe2Ts8B8HdYSrWlayc0", caption: "Gambar 3 dari Drive" },
+        // Anda bisa menambahkan lebih banyak gambar di sini
+        { src: "https://placehold.co/150x100/22c55e/ffffff?text=Contoh+Sukses", caption: "Contoh Gambar Placeholder" } // Ini akan selalu berhasil dimuat untuk tes
     ];
     let currentImageIdx = 0;
     const galleryImageEl = document.getElementById('galleryImage');
@@ -524,10 +503,13 @@
     function displayImage() {
         if (galleryImages.length === 0) {
             galleryImageEl.src = 'https://placehold.co/150x100/25392b/9effae?text=Galeri+Kosong';
+            galleryImageEl.alt = 'Galeri Kosong';
             galleryCounterEl.textContent = "Tidak ada foto di galeri.";
+            console.log("Galeri kosong, menampilkan placeholder galeri kosong.");
             return;
         }
         const imgData = galleryImages[currentImageIdx];
+        console.log("Mencoba memuat gambar:", imgData.src); // Untuk debugging di console browser
         galleryImageEl.src = imgData.src; 
         galleryImageEl.alt = imgData.caption;
         galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
@@ -535,6 +517,12 @@
 
     function startGallery() {
         currentImageIdx = 0;
+        // Set src awal sebelum displayImage dipanggil agar onerror berfungsi jika gambar pertama juga gagal
+        if (galleryImages.length > 0) {
+            galleryImageEl.src = galleryImages[0].src; 
+        } else {
+             galleryImageEl.src = 'https://placehold.co/150x100/25392b/9effae?text=Galeri+Kosong';
+        }
         displayImage();
     }
     nextImageBtn.addEventListener('click', () => {
@@ -921,7 +909,6 @@
             }
         }
         if (linesToClear > 0) {
-            // playTonePlayerSound(tetrisLineClearSound, "Tetris line clear sound"); // Dialih keluar
             score += linesToClear * 100 * level; 
             linesCleared += linesToClear;
             if (linesCleared > 0 && linesCleared % 10 === 0) { 
@@ -948,7 +935,6 @@
     
     function moveHorizontal(direction) { 
         if(!gameRunning) return;
-        // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
         undrawPiece();
         if (!checkCollision(currentRow, currentCol + direction, currentPiece.shape)) {
             currentCol += direction;
@@ -958,7 +944,6 @@
 
     function rotatePiece() {
         if(!gameRunning) return;
-        // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
         undrawPiece();
         const originalShape = currentPiece.shape;
         const N = originalShape.length; 
@@ -1031,14 +1016,12 @@
     document.getElementById('dpadRight').addEventListener('click', () => moveHorizontal(1));
     document.getElementById('dpadDown').addEventListener('click', () => { 
         if(gameRunning) {
-            // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
             moveDown(); 
         }
     });
     document.getElementById('buttonA').addEventListener('click', rotatePiece); 
     document.getElementById('buttonB').addEventListener('click', () => { 
         if(currentVisibleScreen === 'tetris-screen' && gameRunning){
-            // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
             moveDown(); 
         } else {
             playClickSound(); 
