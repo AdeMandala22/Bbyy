@@ -149,7 +149,7 @@
         <div id="screen" class="screen-area">
             <div id="home-screen" class="screen-content active"><h1>Happy Birthday Sayang!</h1><p>Pilih menu di bawah</p></div>
             <div id="message-screen" class="screen-content"><h2 class="text-center text-lg mb-2">Pesan Untukmu</h2><div id="message-content" class="mb-2 text-sm"></div><button id="nextMessageBtn" class="nav-button btn-next">Selanjutnya</button><button id="skipMessageBtn" class="nav-button btn-skip">Lewati Semua</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
-            <div id="gallery-screen" class="screen-content"><h2 class="text-center text-lg mb-1">My Bby Area 😎</h2><p class="text-xs text-center mb-1">🤍</p><img id="galleryImage" src="asset/1.jpg" alt="Foto Galeri"><p id="galleryCounter" class="text-xs text-center my-1"></p><button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button><button onclick="openVideo()" class="main-button btn-music">Bonus</button></div>
+            <div id="gallery-screen" class="screen-content"><h2 class="text-center text-lg mb-1">My Bby Area 😎</h2><p class="text-xs text-center mb-1">🤍</p><div id="galleryMedia"></div><p id="galleryCounter" class="text-xs text-center my-1"></p><button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button><button onclick="openVideo()" class="main-button btn-music">Bonus</button></div>
             <div id="music-screen" class="screen-content music-player"><h2 class="text-center text-lg mb-1">Pemutar Musik</h2><img id="albumArt" src="https://placehold.co/60x60/25392b/9effae?text=Art" alt="Album Art"><div id="songTitle" class="song-title">Lagu Pilihan</div><div id="songArtist" class="song-artist">Artisnya</div><div class="progress-bar"><div id="musicProgress" class="progress"></div></div><div class="controls"><button id="prevSongBtn"><i class="fas fa-backward"></i></button><button id="playPauseBtn"><i class="fas fa-play"></i></button><button id="nextSongBtn"><i class="fas fa-forward"></i></button></div><div class="playlist" id="playlistContainer"></div><button onclick="showScreen('home-screen')" class="nav-button btn-back mt-2">Kembali</button></div>
             <div id="tetris-screen" class="screen-content"><div class="flex justify-between text-xs mb-1"><span>SKOR: <span id="tetrisScore">0</span></span><span>LEVEL: <span id="tetrisLevel">1</span></span></div><div class="flex justify-between text-xs mb-1"><span>GARIS: <span id="tetrisLines">0</span></span></div><div id="tetris-grid"></div><div class="tetris-controls text-center"><button id="tetrisLeftBtn">&lt;</button><button id="tetrisRotateBtn">ROTASI</button><button id="tetrisRightBtn">&gt;</button></div><button id="tetrisStartBtn" class="nav-button start-game-btn">MULAI GAME</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
         </div>
@@ -321,19 +321,49 @@
     }
        ];
         let currentImageIdx = 0;
+    const galleryMediaEl = document.getElementById('galleryMedia');
     const galleryImageEl = document.getElementById('galleryImage');
     const galleryCounterEl = document.getElementById('galleryCounter');
     const nextImageBtn = document.getElementById('nextImageBtn'); // Pemboleh ubah yang hilang
     const printImageBtn = document.getElementById('printImageBtn'); // Pemboleh ubah yang hilang
 
     function displayImage() {
-        if (galleryImages.length === 0) return;
-        const imgData = galleryImages[currentImageIdx];
-        galleryImageEl.onload = () => { galleryImageEl.alt = imgData.caption; };
-        galleryImageEl.onerror = () => { galleryImageEl.src = 'https://placehold.co/150x100/FF0000/FFFFFF?text=RALAT+FAIL'; galleryImageEl.alt = 'Gagal: ' + imgData.src; galleryImageEl.onerror = null; };
-        galleryImageEl.src = imgData.src; galleryImageEl.alt = "Memuat...";
-        galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
+    if (galleryImages.length === 0) return;
+    const imgData = galleryImages[currentImageIdx];
+    galleryMediaEl.innerHTML = ''; // Kosongkan isi sebelumnya
+
+    if (imgData.isVideo) {
+        const iframe = document.createElement('iframe');
+        iframe.src = imgData.embedUrl;
+        iframe.width = "100%";
+        iframe.height = "150";
+        iframe.allow = "autoplay";
+        iframe.allowFullscreen = true;
+        iframe.style.border = "0";
+        iframe.style.display = "block";
+        iframe.style.margin = "0 auto";
+        galleryMediaEl.appendChild(iframe);
+    } else {
+        const img = document.createElement('img');
+        img.src = imgData.src;
+        img.alt = "Memuat...";
+        img.style.maxWidth = "100%";
+        img.style.maxHeight = "120px";
+        img.style.border = "2px solid #9effae";
+        img.style.margin = "10px auto";
+        img.style.display = "block";
+        img.style.objectFit = "contain";
+        img.style.backgroundColor = "#1e2b22";
+        img.onload = () => { img.alt = imgData.caption; };
+        img.onerror = () => {
+            img.src = 'https://placehold.co/150x100/FF0000/FFFFFF?text=RALAT+FAIL';
+            img.alt = 'Gagal: ' + imgData.src;
+        };
+        galleryMediaEl.appendChild(img);
     }
+
+    galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
+}
     function startGallery() { currentImageIdx = 0; if (galleryImages.length > 0) displayImage(); }
     
     // Event listener kini menggunakan pemboleh ubah yang telah diisytiharkan
