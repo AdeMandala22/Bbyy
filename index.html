@@ -208,7 +208,7 @@
             <div id="gallery-screen" class="screen-content">
                 <h2 class="text-center text-lg mb-1">Galeri Foto</h2>
                 <p class="text-xs text-center mb-1" id="gallery-title">HEYML PHOTOSBOX</p>
-                <img id="galleryImage" src="assets/1.jpg" alt="Foto Galeri">
+                <img id="galleryImage" src="asset/1.jpg" alt="Foto Galeri">
                 <p id="galleryCounter" class="text-xs text-center my-1">Mencetak foto 1 dari 5...</p>
                 <button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>
                 <button id="printImageBtn" class="nav-button btn-skip">Mulai Cetak</button>
@@ -290,54 +290,43 @@
     
     // --- Background Music (Local Files) ---
     const backgroundPlaylist = [ // Ganti dengan path fail muzik anda
-        "assets/muzik_latar1.mp3",
-        "assets/muzik_latar2.mp3",
-        // Tambah lebih banyak fail muzik di sini
+        "asset/muzik_latar1.mp3",
+        "asset/muzik_latar2.mp3",
     ];
     let currentBackgroundSongIndex = 0;
     let isBackgroundMusicPlaying = false;
     let backgroundMusicInitialized = false;
     const backgroundMusicPlayer = new Tone.Player({
-        // url akan ditetapkan oleh loadAndPlayBackgroundSong
-        loop: false, // Kita akan mengendalikan loop atau lagu seterusnya secara manual
+        loop: false, 
         onload: () => {
             console.log("Fail muzik latar '" + backgroundPlaylist[currentBackgroundSongIndex] + "' dimuat.");
-            if (isBackgroundMusicPlaying) { // Jika diarahkan untuk main selepas muat
+            if (isBackgroundMusicPlaying) { 
                 backgroundMusicPlayer.start();
             }
         },
-        onstop: () => { // Dipanggil apabila lagu selesai (jika loop=false)
+        onstop: () => { 
             console.log("Muzik latar selesai:", backgroundPlaylist[currentBackgroundSongIndex]);
-            if (isBackgroundMusicPlaying) { // Hanya mainkan seterusnya jika memang sepatutnya main
+            if (isBackgroundMusicPlaying) { 
                  playNextBackgroundSong();
             }
         },
         onerror: (e) => console.error("Ralat memuat muzik latar:", backgroundPlaylist[currentBackgroundSongIndex], e)
     }).toDestination();
-    backgroundMusicPlayer.volume.value = -6; // Kurangkan volume muzik latar (dalam dB)
-
+    backgroundMusicPlayer.volume.value = -6; 
 
     function loadAndPlayBackgroundSong(index) {
         if (index >= 0 && index < backgroundPlaylist.length) {
             currentBackgroundSongIndex = index;
             const songUrl = backgroundPlaylist[index];
             console.log("Cuba memuat muzik latar:", songUrl);
-            // Hentikan pemain semasa sebelum memuat lagu baru
             if (backgroundMusicPlayer.state === "started") {
                 backgroundMusicPlayer.stop();
             }
             backgroundMusicPlayer.load(songUrl)
-                .then(() => {
-                    // Onload akan menangani start jika isBackgroundMusicPlaying true
-                    // Jika tidak, ia hanya akan dimuatkan
-                    if (!isBackgroundMusicPlaying) { // Jika tidak sepatutnya main, pastikan ia tidak auto-start
-                         console.log("Muzik latar dimuat tetapi tidak dimainkan (dijeda).");
-                    }
-                })
                 .catch(e => console.error("Pengecualian semasa memuat muzik latar:", e));
         } else {
             console.warn("Indeks lagu latar tidak valid:", index);
-            isBackgroundMusicPlaying = false; // Hentikan main jika indeks tidak valid
+            isBackgroundMusicPlaying = false; 
         }
     }
 
@@ -350,15 +339,14 @@
         if (!isBackgroundMusicPlaying && backgroundPlaylist.length > 0) {
             console.log("Memulakan muzik latar...");
             isBackgroundMusicPlaying = true;
-            loadAndPlayBackgroundSong(currentBackgroundSongIndex); // Muat dan mainkan lagu semasa atau pertama
+            loadAndPlayBackgroundSong(currentBackgroundSongIndex); 
         }
     }
 
     function pauseBackgroundMusic() {
         if (isBackgroundMusicPlaying && backgroundMusicPlayer.loaded && backgroundMusicPlayer.state === "started") {
-            backgroundMusicPlayer.stop(); // Menggunakan stop agar onstop boleh trigger lagu seterusnya jika perlu
+            backgroundMusicPlayer.stop(); 
             console.log("Muzik latar dijeda (menggunakan stop).");
-            // isBackgroundMusicPlaying tetap true, menandakan ia sepatutnya main apabila disambung
         }
     }
 
@@ -367,61 +355,55 @@
             console.log("Menyambung semula muzik latar...");
             backgroundMusicPlayer.start();
         } else if (isBackgroundMusicPlaying && !backgroundMusicPlayer.loaded && backgroundPlaylist.length > 0) {
-            // Jika dijeda sebelum sempat muat, cuba muat dan mainkan semula
             console.log("Muzik latar belum dimuat, cuba muat dan mainkan semula...");
             loadAndPlayBackgroundSong(currentBackgroundSongIndex);
         }
     }
     // --- End of Background Music ---
 
-
-    // --- Internal Music Player (Tone.Player untuk playlist di skrin "MUSIK") ---
+    // --- Internal Music Player ---
     const internalMusicPlayer = new Tone.Player({
         onload: () => console.log("Fail lagu internal dimuat."),
         onerror: (e) => console.error("Ralat memuat fail lagu internal:", e)
     }).toDestination();
-    let internalMusicSynth; // Jika anda ingin menambah semula lagu synth seperti Happy Birthday
+    let internalMusicSynth; 
     
-    // Senarai main untuk Pemutar Musik Internal
     const internalPlaylist = [
-        // Contoh, anda boleh menggunakan fail lokal atau URL eksternal yang berfungsi
         { title: "On Bended Knee", artist: "Boyz II Men", src: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/music/on-bended-knee.mp3", duration: 329 },
         { title: "Nothings Gonna Change My Love", artist: "George Benson", src: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/music/nothings-gonna-change-my-love-for-you.mp3", duration: 243 },
-        { title: "Lagu Lokal Contoh", artist: "Saya Sendiri", src: "assets/Paul_Partohap_VITAMIN U.mp3", duration: 250 } // Contoh fail lokal
+        { title: "Lagu Lokal Contoh", artist: "Saya Sendiri", src: "asset/contoh_lagu_internal.mp3", duration: 180 }
     ];
     let currentInternalSongIndex = 0;
     let isInternalMusicPlaying = false;
     let internalMusicInterval;
     // --- End of Internal Music Player Variables ---
 
-
-    function initializeGlobalAudio() { // Dipanggil pada interaksi pengguna pertama
+    function initializeGlobalAudio() { 
         if (backgroundMusicInitialized) return;
 
         if (Tone.context.state !== 'running') {
             Tone.start().then(() => {
                 console.log("Konteks Audio Tone.js berjaya dimulakan.");
-                startBackgroundMusic(); // Mulakan muzik latar selepas Tone.js sedia
+                startBackgroundMusic(); 
             }).catch(e => {
                 console.warn("Gagal memulakan Tone.js AudioContext:", e);
             });
         } else {
-            startBackgroundMusic(); // Jika Tone.js sudah berjalan, terus mulakan muzik latar
+            startBackgroundMusic(); 
         }
         backgroundMusicInitialized = true;
     }
     
-    function playClickSound() { // Kini hanya untuk memulakan audio global jika belum
+    function playClickSound() { 
         if (!backgroundMusicInitialized) {
             initializeGlobalAudio();
-        } else if (Tone.context.state !== 'running') { // Jika Tone.js berhenti atas sebab tertentu
+        } else if (Tone.context.state !== 'running') { 
             Tone.start().catch(e => console.warn("Tone.start gagal pada klik seterusnya:", e));
         }
     }
 
-
     function showScreen(screenId) {
-        playClickSound(); // Memastikan audio global diinisialisasi pada interaksi pertama
+        playClickSound(); 
         
         if (currentVisibleScreen === 'music-screen' && isInternalMusicPlaying) {
             internalMusicPlayer.stop();
@@ -442,29 +424,39 @@
         if (screenId === 'music-screen') {
             pauseBackgroundMusic();
         } else {
-            // Hanya sambung semula jika muzik latar sepatutnya bermain dan telah diinisialisasi
             if (backgroundMusicInitialized && isBackgroundMusicPlaying) {
                  resumeBackgroundMusic();
             }
         }
     }
 
-    // --- Message Logic --- (Tidak berubah)
-    const messages = ["Hai Cei, ...", /* ... mesej lain ... */];
+    // --- Message Logic ---
+    // MENGEMBALIKAN SENARAI MESEJ PENUH
+    const messages = [
+        "Hai Cei, Selamat Ulang Tahun ya!",
+        "Semoga panjang umur, sehat selalu...",
+        "Tambah dewasa, tambah bijaksana...",
+        "Semua doa terbaik untukmu!",
+        "Ini ada sedikit kejutan buat kamu...",
+        "CIEEEE KEPO YAAA WKWKW",
+        "Pokoknya, HAPPY BIRTHDAY!",
+        "Jangan lupa traktirannya! ;)",
+        "Udah ya, itu aja pesannya. Hehe."
+    ];
     let currentMessageIdx = 0;
     const messageContentEl = document.getElementById('message-content');
     const nextMessageBtn = document.getElementById('nextMessageBtn');
     const skipMessageBtn = document.getElementById('skipMessageBtn');
-    function displayMessage() { if (currentMessageIdx < messages.length) { messageContentEl.textContent = messages[currentMessageIdx]; } else { messageContentEl.textContent = "Pesan Selesai!"; nextMessageBtn.style.display = 'none'; skipMessageBtn.style.display = 'none';}}
+    function displayMessage() { if (currentMessageIdx < messages.length) { messageContentEl.textContent = messages[currentMessageIdx]; } else { messageContentEl.textContent = "Pesan Selesai! Terima Kasih!"; nextMessageBtn.style.display = 'none'; skipMessageBtn.style.display = 'none';}}
     function startMessages() { currentMessageIdx = 0; nextMessageBtn.style.display = 'block'; skipMessageBtn.style.display = 'block'; displayMessage(); }
     nextMessageBtn.addEventListener('click', () => { playClickSound(); currentMessageIdx++; displayMessage(); });
     skipMessageBtn.addEventListener('click', () => { playClickSound(); currentMessageIdx = messages.length -1; displayMessage(); });
 
-    // --- Gallery Logic --- (Tidak berubah, menggunakan asset/N.jpg)
+    // --- Gallery Logic ---
     const galleryImages = [
-        { src: "assets/1.jpg", caption: "Foto Kenangan 1" }, { src: "assets/2.jpg", caption: "Foto Kenangan 2" },
-        { src: "assets/3.jpg", caption: "Foto Kenangan 3" }, { src: "assets/4.jpg", caption: "Foto Kenangan 4" },
-        { src: "assets/5.jpg", caption: "Foto Kenangan 5" }
+        { src: "asset/1.jpg", caption: "Foto Kenangan 1" }, { src: "asset/2.jpg", caption: "Foto Kenangan 2" },
+        { src: "asset/3.jpg", caption: "Foto Kenangan 3" }, { src: "asset/4.jpg", caption: "Foto Kenangan 4" },
+        { src: "asset/5.jpg", caption: "Foto Kenangan 5" }
     ];
     let currentImageIdx = 0;
     const galleryImageEl = document.getElementById('galleryImage');
@@ -546,10 +538,10 @@
     }
     
     function togglePlayPauseInternalMusic() {
-        playClickSound(); // Memastikan audio global diinisialisasi
+        playClickSound();
         if (currentInternalSongIndex < 0 || currentInternalSongIndex >= internalPlaylist.length) { console.warn("Indeks lagu internal tidak valid."); return; }
         
-        pauseBackgroundMusic(); // Pastikan muzik latar dijeda
+        pauseBackgroundMusic();
 
         if (internalMusicPlayer.loaded) {
             if (isInternalMusicPlaying) {
@@ -596,16 +588,51 @@
         }
     }
 
-    // --- Tetris Logic (Sama seperti sebelumnya, tiada perubahan diperlukan) ---
-    const tetrisGridEl = document.getElementById('tetris-grid'); /* ... semua variabel Tetris ... */
-    function createTetrisGrid() { /* ... */ } function drawGrid() { /* ... */ }
-    function drawPiece() { /* ... */ } function undrawPiece() { /* ... */ }
-    function spawnPiece() { /* ... */ } function checkCollision(r,c,pS) { /* ... */ }
-    function lockPiece() { /* ... */ } function clearLines() { /* ... */ }
-    function moveDown() { /* ... */ } function moveHorizontal(dir) { /* ... */ }
-    function rotatePiece() { /* ... */ } function updateTetrisUI() { /* ... */ }
-    function gameOver() { /* ... */ } function gameLoop() { /* ... */ }
-    function startTetrisGame() { playClickSound(); /* ... */ } function initTetris() { /* ... */ }
+    // --- Tetris Logic (Sama seperti sebelumnya) ---
+    const tetrisGridEl = document.getElementById('tetris-grid');
+    const tetrisScoreEl = document.getElementById('tetrisScore');
+    const tetrisLevelEl = document.getElementById('tetrisLevel');
+    const tetrisLinesEl = document.getElementById('tetrisLines');
+    const tetrisStartBtn = document.getElementById('tetrisStartBtn');
+    const tetrisLeftBtn = document.getElementById('tetrisLeftBtn');
+    const tetrisRightBtn = document.getElementById('tetrisRightBtn');
+    const tetrisRotateBtn = document.getElementById('tetrisRotateBtn');
+    const GRID_WIDTH = 10; const GRID_HEIGHT = 18; let tetrisGrid = []; let score = 0; let level = 1; let linesCleared = 0;
+    let gameInterval; let currentPiece; let currentRow; let currentCol; let gameRunning = false;
+    const TETROMINOES = {
+        'I': { shape: [[1,1,1,1]], color: 'filledI' }, 'L': { shape: [[1,0,0], [1,1,1]], color: 'filledL' },
+        'J': { shape: [[0,0,1], [1,1,1]], color: 'filledJ' }, 'T': { shape: [[0,1,0], [1,1,1]], color: 'filledT' },
+        'S': { shape: [[0,1,1], [1,1,0]], color: 'filledS' }, 'Z': { shape: [[1,1,0], [0,1,1]], color: 'filledZ' },
+        'O': { shape: [[1,1], [1,1]], color: 'filledO' }
+    };
+    const PIECE_KEYS = Object.keys(TETROMINOES);
+    function createTetrisGrid() {
+        tetrisGridEl.innerHTML = ''; tetrisGrid = [];
+        for (let r = 0; r < GRID_HEIGHT; r++) {
+            tetrisGrid[r] = []; for (let c = 0; c < GRID_WIDTH; c++) {
+                const cell = document.createElement('div'); cell.classList.add('tetris-cell');
+                tetrisGridEl.appendChild(cell); tetrisGrid[r][c] = { element: cell, filled: null };
+            }
+        }
+    }
+    function drawGrid() { for(let r=0; r < GRID_HEIGHT; r++) { for(let c=0; c < GRID_WIDTH; c++) { tetrisGrid[r][c].element.className = 'tetris-cell'; if(tetrisGrid[r][c].filled) { tetrisGrid[r][c].element.classList.add(tetrisGrid[r][c].filled); } } } }
+    function drawPiece() { currentPiece.shape.forEach((row, rOffset) => { row.forEach((cell, cOffset) => { if (cell) { const r = currentRow + rOffset; const c = currentCol + cOffset; if (r >= 0 && r < GRID_HEIGHT && c >= 0 && c < GRID_WIDTH) { tetrisGrid[r][c].element.classList.add(currentPiece.color); } } }); }); }
+    function undrawPiece() { currentPiece.shape.forEach((row, rOffset) => { row.forEach((cell, cOffset) => { if (cell) { const r = currentRow + rOffset; const c = currentCol + cOffset; if (r >= 0 && r < GRID_HEIGHT && c >= 0 && c < GRID_WIDTH && !tetrisGrid[r][c].filled) { tetrisGrid[r][c].element.classList.remove(currentPiece.color); } } }); }); }
+    function spawnPiece() { const randomKey = PIECE_KEYS[Math.floor(Math.random() * PIECE_KEYS.length)]; currentPiece = JSON.parse(JSON.stringify(TETROMINOES[randomKey])); currentRow = 0; currentCol = Math.floor(GRID_WIDTH / 2) - Math.floor(currentPiece.shape[0].length / 2); if (checkCollision(currentRow, currentCol, currentPiece.shape)) { gameOver(); } }
+    function checkCollision(row, col, pieceShape) { for (let r = 0; r < pieceShape.length; r++) { for (let c = 0; c < pieceShape[r].length; c++) { if (pieceShape[r][c]) { const newRow = row + r; const newCol = col + c; if (newRow >= GRID_HEIGHT || newCol < 0 || newCol >= GRID_WIDTH || (newRow >=0 && tetrisGrid[newRow][newCol].filled) ) { return true; } } } } return false; }
+    function lockPiece() { currentPiece.shape.forEach((row, rOffset) => { row.forEach((cell, cOffset) => { if (cell) { const r = currentRow + rOffset; const c = currentCol + cOffset; if (r >= 0 && r < GRID_HEIGHT && c >= 0 && c < GRID_WIDTH) { tetrisGrid[r][c].filled = currentPiece.color; } } }); }); clearLines(); }
+    function clearLines() {
+        let linesToClear = 0; for (let r = GRID_HEIGHT - 1; r >= 0; r--) { if (tetrisGrid[r].every(cell => cell.filled)) { linesToClear++; for (let rowAbove = r; rowAbove > 0; rowAbove--) { for (let c = 0; c < GRID_WIDTH; c++) { tetrisGrid[rowAbove][c].filled = tetrisGrid[rowAbove - 1][c].filled; } } for (let c = 0; c < GRID_WIDTH; c++) { tetrisGrid[0][c].filled = null; } r++; } }
+        if (linesToClear > 0) { score += linesToClear * 100 * level; linesCleared += linesToClear; if (linesCleared > 0 && linesCleared % 10 === 0) { level++; clearInterval(gameInterval); gameInterval = setInterval(gameLoop, Math.max(200, 1000 - (level -1) * 50) ); } updateTetrisUI(); }
+    }
+    function moveDown() { if(!gameRunning) return; undrawPiece(); if (!checkCollision(currentRow + 1, currentCol, currentPiece.shape)) { currentRow++; } else { lockPiece(); spawnPiece(); } drawGrid(); drawPiece(); }
+    function moveHorizontal(direction) { if(!gameRunning) return; undrawPiece(); if (!checkCollision(currentRow, currentCol + direction, currentPiece.shape)) { currentCol += direction; } drawPiece(); }
+    function rotatePiece() { if(!gameRunning) return; undrawPiece(); const originalShape = currentPiece.shape; const N = originalShape.length; const M = originalShape[0].length; const newShape = Array(M).fill(null).map(() => Array(N).fill(0)); for (let r = 0; r < N; r++) { for (let c = 0; c < M; c++) { newShape[c][N - 1 - r] = originalShape[r][c]; } } if (!checkCollision(currentRow, currentCol, newShape)) { currentPiece.shape = newShape; } drawPiece(); }
+    function updateTetrisUI() { tetrisScoreEl.textContent = score; tetrisLevelEl.textContent = level; tetrisLinesEl.textContent = linesCleared; }
+    function gameOver() { clearInterval(gameInterval); gameRunning = false; tetrisStartBtn.textContent = "MULAI LAGI"; setTimeout(() => alert(`GAME OVER! Skor: ${score}`), 100); }
+    function gameLoop() { if(gameRunning) { moveDown(); } }
+    function startTetrisGame() { playClickSound(); if(gameRunning && gameInterval) { clearInterval(gameInterval); } createTetrisGrid(); score = 0; level = 1; linesCleared = 0; updateTetrisUI(); spawnPiece(); drawGrid(); drawPiece(); gameRunning = true; tetrisStartBtn.textContent = "BERMAIN..."; gameInterval = setInterval(gameLoop, Math.max(200, 1000 - (level-1)*50)); }
+    function initTetris() { createTetrisGrid(); updateTetrisUI(); if (!gameRunning) { tetrisStartBtn.textContent = "MULAI GAME"; } }
     tetrisStartBtn.addEventListener('click', startTetrisGame);
     tetrisLeftBtn.addEventListener('click', () => moveHorizontal(-1));
     tetrisRightBtn.addEventListener('click', () => moveHorizontal(1));
@@ -617,10 +644,9 @@
     document.getElementById('buttonA').addEventListener('click', rotatePiece); 
     document.getElementById('buttonB').addEventListener('click', () => { if(currentVisibleScreen === 'tetris-screen' && gameRunning) moveDown(); else playClickSound(); });
 
-
     // Initialize
     showScreen('home-screen'); 
-    ['click', 'touchstart', 'keydown'].forEach(eventName => { // Guna event listener yang sama
+    ['click', 'touchstart', 'keydown'].forEach(eventName => { 
         document.body.addEventListener(eventName, initializeGlobalAudio, { once: true });
     });
 
