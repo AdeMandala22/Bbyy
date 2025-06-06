@@ -208,7 +208,7 @@
             <div id="gallery-screen" class="screen-content">
                 <h2 class="text-center text-lg mb-1">Galeri Foto</h2>
                 <p class="text-xs text-center mb-1" id="gallery-title">HEYML PHOTOSBOX</p>
-                <img id="galleryImage" src="asset/1.jpg" alt="Foto Galeri">
+                <img id="galleryImage" src="assets/1.jpg" alt="Foto Galeri">
                 <p id="galleryCounter" class="text-xs text-center my-1">Mencetak foto 1 dari 5...</p>
                 <button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>
                 <button id="printImageBtn" class="nav-button btn-skip">Mulai Cetak</button>
@@ -290,8 +290,8 @@
     
     // --- Background Music (Local Files) ---
     const backgroundPlaylist = [ // Ganti dengan path fail muzik anda
-        "asset/muzik_latar1.mp3",
-        "asset/muzik_latar2.mp3",
+        "assets/Paul_Partohap_VITAMIN U.mp3",
+        "assets/Paul_Partohap_VITAMIN U.mp3",
     ];
     let currentBackgroundSongIndex = 0;
     let isBackgroundMusicPlaying = false;
@@ -371,7 +371,7 @@
     const internalPlaylist = [
         { title: "On Bended Knee", artist: "Boyz II Men", src: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/music/on-bended-knee.mp3", duration: 329 },
         { title: "Nothings Gonna Change My Love", artist: "George Benson", src: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/music/nothings-gonna-change-my-love-for-you.mp3", duration: 243 },
-        { title: "Lagu Lokal Contoh", artist: "Saya Sendiri", src: "asset/contoh_lagu_internal.mp3", duration: 180 }
+        { title: "Paul_Partohap_VITAMIN U", artist: "Paul", src: "assets/Paul_Partohap_VITAMIN U.mp3", duration: 250 }
     ];
     let currentInternalSongIndex = 0;
     let isInternalMusicPlaying = false;
@@ -454,9 +454,9 @@
 
     // --- Gallery Logic ---
     const galleryImages = [
-        { src: "asset/1.jpg", caption: "Foto Kenangan 1" }, { src: "asset/2.jpg", caption: "Foto Kenangan 2" },
-        { src: "asset/3.jpg", caption: "Foto Kenangan 3" }, { src: "asset/4.jpg", caption: "Foto Kenangan 4" },
-        { src: "asset/5.jpg", caption: "Foto Kenangan 5" }
+        { src: "assets/1.jpg", caption: "-" }, { src: "assets/2.jpg", caption: "-" },
+        { src: "assets/3.jpg", caption: "-" }, { src: "assets/4.jpg", caption: "-" },
+        { src: "assets/5.jpg", caption: "-" }
     ];
     let currentImageIdx = 0;
     const galleryImageEl = document.getElementById('galleryImage');
