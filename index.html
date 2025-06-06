@@ -147,9 +147,9 @@
     <div class="console-body">
         <div class="console-top-bar"><div class="power-led"></div><div class="brand-name">OhMyHades</div><div></div></div>
         <div id="screen" class="screen-area">
-            <div id="home-screen" class="screen-content active"><h1>Happy Birthday!</h1><p>Pilih menu di bawah</p></div>
+            <div id="home-screen" class="screen-content active"><h1>Happy Birthday Sayang!</h1><p>Pilih menu di bawah</p></div>
             <div id="message-screen" class="screen-content"><h2 class="text-center text-lg mb-2">Pesan Untukmu</h2><div id="message-content" class="mb-2 text-sm"></div><button id="nextMessageBtn" class="nav-button btn-next">Selanjutnya</button><button id="skipMessageBtn" class="nav-button btn-skip">Lewati Semua</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
-            <div id="gallery-screen" class="screen-content"><h2 class="text-center text-lg mb-1">Galeri Foto</h2><p class="text-xs text-center mb-1">Princes Area</p><img id="galleryImage" src="asset/1.jpg" alt="Foto Galeri"><p id="galleryCounter" class="text-xs text-center my-1"></p><button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
+            <div id="gallery-screen" class="screen-content"><h2 class="text-center text-lg mb-1">My Bby Area 😎</h2><p class="text-xs text-center mb-1">🤍</p><img id="galleryImage" src="asset/1.jpg" alt="Foto Galeri"><p id="galleryCounter" class="text-xs text-center my-1"></p><button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
             <div id="music-screen" class="screen-content music-player"><h2 class="text-center text-lg mb-1">Pemutar Musik</h2><img id="albumArt" src="https://placehold.co/60x60/25392b/9effae?text=Art" alt="Album Art"><div id="songTitle" class="song-title">Lagu Pilihan</div><div id="songArtist" class="song-artist">Artisnya</div><div class="progress-bar"><div id="musicProgress" class="progress"></div></div><div class="controls"><button id="prevSongBtn"><i class="fas fa-backward"></i></button><button id="playPauseBtn"><i class="fas fa-play"></i></button><button id="nextSongBtn"><i class="fas fa-forward"></i></button></div><div class="playlist" id="playlistContainer"></div><button onclick="showScreen('home-screen')" class="nav-button btn-back mt-2">Kembali</button></div>
             <div id="tetris-screen" class="screen-content"><div class="flex justify-between text-xs mb-1"><span>SKOR: <span id="tetrisScore">0</span></span><span>LEVEL: <span id="tetrisLevel">1</span></span></div><div class="flex justify-between text-xs mb-1"><span>GARIS: <span id="tetrisLines">0</span></span></div><div id="tetris-grid"></div><div class="tetris-controls text-center"><button id="tetrisLeftBtn">&lt;</button><button id="tetrisRotateBtn">ROTASI</button><button id="tetrisRightBtn">&gt;</button></div><button id="tetrisStartBtn" class="nav-button start-game-btn">MULAI GAME</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
         </div>
@@ -174,8 +174,9 @@
     // --- Konfigurasi Playlist Muzik (Fail Lokal) ---
     // GANTIKAN DENGAN PATH KE FAIL MUZIK DAN GAMBAR ANDA DI DALAM FOLDER 'asset/'
     const musicPlaylist = [
-        { src: "/vitamin_paul.mp3", title: "vitamin", artist: "paul", artwork: "assets/1.jpg" },
-        
+        { src: "/vitamin_paul.mp3", title: "vitamin", artist: "paul", artwork: "assets/2.jpg" },
+        { src: "/made4u.mp3", title: "made4u", artist: "paul", artwork: "assets/3.jpg" },
+        { src: "/candyrella.mp3", title: "candyrella", artist: "paul", artwork: "assets/4.jpg" }
     ];
     let currentSongIndex = 0;
 
@@ -283,12 +284,12 @@
     }
 
     // --- Logik Mesej ---
-    const messages = [ "Hai Sayang, Selamat Ulang Tahun ya!", "Semoga panjang umur, sehat selalu...", "Tambah dewasa, tambah bijaksana...", "Semua doa terbaik untukmu!", "Ini ada sedikit kejutan buat kamu...", "CIEEEE KEPO YAAA WKWKW", "Pokoknya, HAPPY BIRTHDAY!", "I Love You! ;)", "Udah ya, itu aja pesannya. Hehe." ];
+    const messages = [ "Hai Sayang, Selamat Ulang Tahun ya!", "Semoga panjang umur, sehat selalu...", "Tambah dewasa, tambah bijaksana...", "Semua doa terbaik untukmu!", "I have a little suprise...", "CIEEEE KEPO YAAA WKWKW", "Pokoknya, HAPPY BIRTHDAY!", "I Love You! ;)", "Udah ya, itu aja pesannya. Hehe." ];
     let currentMessageIdx = 0;
     const messageContentEl = document.getElementById('message-content');
     const nextMessageBtn = document.getElementById('nextMessageBtn');
     const skipMessageBtn = document.getElementById('skipMessageBtn');
-    function displayMessage() { if (currentMessageIdx < messages.length) { messageContentEl.textContent = messages[currentMessageIdx]; } else { messageContentEl.textContent = "Pesan Selesai!"; nextMessageBtn.style.display = 'none'; skipMessageBtn.style.display = 'none';}}
+    function displayMessage() { if (currentMessageIdx < messages.length) { messageContentEl.textContent = messages[currentMessageIdx]; } else { messageContentEl.textContent = ""; nextMessageBtn.style.display = 'none'; skipMessageBtn.style.display = 'none';}}
     function startMessages() { currentMessageIdx = 0; nextMessageBtn.style.display = 'block'; skipMessageBtn.style.display = 'block'; displayMessage(); }
     nextMessageBtn.addEventListener('click', () => { currentMessageIdx++; displayMessage(); });
     skipMessageBtn.addEventListener('click', () => { currentMessageIdx = messages.length - 1; displayMessage(); });
