@@ -318,25 +318,56 @@
     }
        ];
     let currentImageIdx = 0;
-    const galleryImageEl = document.getElementById('galleryImage');
-    const galleryCounterEl = document.getElementById('galleryCounter');
-    const nextImageBtn = document.getElementById('nextImageBtn'); // Pemboleh ubah yang hilang
-    const printImageBtn = document.getElementById('printImageBtn'); // Pemboleh ubah yang hilang
+    
+        let currentImageIdx = 0;
+        const galleryMediaEl = document.getElementById('galleryMedia');
+        const galleryCounterEl = document.getElementById('galleryCounter');
+        const nextImageBtn = document.getElementById('nextImageBtn');
 
-    function displayImage() {
-        if (galleryImages.length === 0) return;
-        const imgData = galleryImages[currentImageIdx];
-        galleryImageEl.onload = () => { galleryImageEl.alt = imgData.caption; };
-        galleryImageEl.onerror = () => { galleryImageEl.src = 'https://placehold.co/150x100/FF0000/FFFFFF?text=RALAT+FAIL'; galleryImageEl.alt = 'Gagal: ' + imgData.src; galleryImageEl.onerror = null; };
-        galleryImageEl.src = imgData.src; galleryImageEl.alt = "Memuat...";
-        galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
-    }
-    function startGallery() { currentImageIdx = 0; if (galleryImages.length > 0) displayImage(); }
-    
-    // Event listener kini menggunakan pemboleh ubah yang telah diisytiharkan
-    nextImageBtn.addEventListener('click', () => { if (galleryImages.length > 0) { currentImageIdx = (currentImageIdx + 1) % galleryImages.length; displayImage(); } });
-    printImageBtn.addEventListener('click', () => { if (galleryImages.length > 0) alert(`"Mencetak" ${galleryImages[currentImageIdx].caption}`); });
-    
+        function displayImage() {
+            if (galleryImages.length === 0) return;
+            const imgData = galleryImages[currentImageIdx];
+            galleryMediaEl.innerHTML = '';
+
+            if (imgData.isVideo) {
+                const iframe = document.createElement('iframe');
+                iframe.src = imgData.embedUrl;
+                iframe.width = "100%";
+                iframe.height = "150";
+                iframe.allow = "autoplay";
+                iframe.allowFullscreen = true;
+                iframe.style.border = "0";
+                galleryMediaEl.appendChild(iframe);
+            } else {
+                const img = document.createElement('img');
+                img.src = imgData.src;
+                img.alt = "Memuat...";
+                img.style.maxWidth = "100%";
+                img.style.maxHeight = "120px";
+                img.style.border = "2px solid #9effae";
+                img.style.margin = "10px auto";
+                img.style.display = "block";
+                img.style.objectFit = "contain";
+                img.style.backgroundColor = "#1e2b22";
+                img.onload = () => { img.alt = imgData.caption; };
+                img.onerror = () => {
+                    img.src = 'https://placehold.co/150x100/FF0000/FFFFFF?text=RALAT+FAIL';
+                    img.alt = 'Gagal: ' + imgData.src;
+                };
+                galleryMediaEl.appendChild(img);
+            }
+
+            galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
+        }
+
+        nextImageBtn.addEventListener('click', () => {
+            if (galleryImages.length > 0) {
+                currentImageIdx = (currentImageIdx + 1) % galleryImages.length;
+                displayImage();
+            }
+        });
+
+        displayImage();
     // --- Logik Tetris (LENGKAP) ---
     const tetrisGridEl=document.getElementById('tetris-grid');const tetrisScoreEl=document.getElementById('tetrisScore');const tetrisLevelEl=document.getElementById('tetrisLevel');const tetrisLinesEl=document.getElementById('tetrisLines');const tetrisStartBtn=document.getElementById('tetrisStartBtn');const tetrisLeftBtn=document.getElementById('tetrisLeftBtn');const tetrisRightBtn=document.getElementById('tetrisRightBtn');const tetrisRotateBtn=document.getElementById('tetrisRotateBtn');const GRID_WIDTH=10;const GRID_HEIGHT=18;let tetrisGrid=[];let score=0;let level=1;let linesCleared=0;let gameInterval;let currentPiece;let currentRow;let currentCol;let gameRunning=!1;const TETROMINOES={'I':{shape:[[1,1,1,1]],color:'filledI'},'L':{shape:[[1,0,0],[1,1,1]],color:'filledL'},'J':{shape:[[0,0,1],[1,1,1]],color:'filledJ'},'T':{shape:[[0,1,0],[1,1,1]],color:'filledT'},'S':{shape:[[0,1,1],[1,1,0]],color:'filledS'},'Z':{shape:[[1,1,0],[0,1,1]],color:'filledZ'},'O':{shape:[[1,1],[1,1]],color:'filledO'}};const PIECE_KEYS=Object.keys(TETROMINOES);function createTetrisGrid(){tetrisGridEl.innerHTML='';tetrisGrid=[];for(let r=0;r<GRID_HEIGHT;r++){tetrisGrid[r]=[];for(let c=0;c<GRID_WIDTH;c++){const e=document.createElement('div');e.classList.add('tetris-cell');tetrisGridEl.appendChild(e);tetrisGrid[r][c]={element:e,filled:null}}}}
     function drawGrid(){for(let r=0;r<GRID_HEIGHT;r++)for(let c=0;c<GRID_WIDTH;c++)tetrisGrid[r][c].element.className='tetris-cell',tetrisGrid[r][c].filled&&tetrisGrid[r][c].element.classList.add(tetrisGrid[r][c].filled)}function drawPiece(){currentPiece.shape.forEach((e,t)=>{e.forEach((e,o)=>{if(e){const s=currentRow+t,i=currentCol+o;s>=0&&s<GRID_HEIGHT&&i>=0&&i<GRID_WIDTH&&tetrisGrid[s][i].element.classList.add(currentPiece.color)}})})}function undrawPiece(){currentPiece.shape.forEach((e,t)=>{e.forEach((e,o)=>{if(e){const s=currentRow+t,i=currentCol+o;s>=0&&s<GRID_HEIGHT&&i>=0&&i<GRID_WIDTH&&!tetrisGrid[s][i].filled&&tetrisGrid[s][i].element.classList.remove(currentPiece.color)}})})}
