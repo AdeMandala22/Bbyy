@@ -1,439 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Happy Birthday!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retro Birthday Console</title>
   <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
     body {
-      background: #222;
-      color: #0f0;
+      background: #111;
+      color: #fff;
       font-family: 'Courier New', monospace;
-      margin: 0;
-      padding: 0;
+      height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      justify-content: center;
     }
-
-    .console {
-      width: 90%;
-      max-width: 700px;
-      height: 95vh;
-      border: 10px solid #0f0;
-      background-color: #000;
+    .console-frame {
+      background: #e0e0e0;
+      border: 8px solid #333;
+      border-radius: 24px;
+      width: 320px;
+      height: 560px;
       position: relative;
-      overflow-y: auto;
-      box-shadow: 0 0 10px #0f0;
-      padding: 20px;
-      box-sizing: border-box;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
     }
-
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    header h1 {
-      font-size: 36px;
-      color: #0f0;
-      text-shadow: 1px 1px black;
-    }
-
-    nav {
+    .console-header {
       display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
-    }
-
-    nav button {
-      padding: 15px 30px;
-      font-size: 18px;
-      border: 2px solid #0f0;
-      background: none;
-      color: #0f0;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    nav button:hover {
-      background-color: #0f0;
-      color: #000;
-    }
-
-    .section {
-      display: none;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .message p {
-      font-size: 18px;
-      line-height: 1.5;
-    }
-
-    .gallery {
-      display: flex;
-      flex-direction: column;
       align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
     }
-
-    .gallery img {
-      width: 100%;
-      max-height: 300px;
-      object-fit: cover;
-      margin: 10px 0;
+    .power-indicator {
+      width: 12px; height: 12px;
+      background: red; border-radius: 50%;
     }
-
-    .gallery-buttons {
-      margin-top: 10px;
-    }
-
-    .gallery-buttons button {
-      margin: 0 10px;
-      padding: 10px 20px;
-    }
-
-    audio {
-      width: 100%;
-      margin: 20px 0;
-    }
-
-    canvas {
+    .screen {
       background: #000;
-      display: block;
-      margin: 0 auto;
+      margin: 8px auto;
+      width: 280px; height: 200px;
+      border: 4px solid #333; border-radius: 8px;
+      position: relative;
     }
-
-    footer {
-      margin-top: 40px;
+    #screen-content {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #0a0; color: #0f0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       text-align: center;
+      font-size: 16px;
+    }
+    .menu-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      padding: 12px;
+    }
+    .btn-menu {
+      padding: 8px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-menu.blue { background: #2979ff; }
+    .btn-menu.red { background: #d32f2f; }
+    .btn-menu.purple { background: #7b1fa2; }
+    .btn-menu.green { background: #388e3c; }
+
+    .bottom-buttons {
+      position: absolute;
+      bottom: 24px;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: space-evenly;
+    }
+    .btn-start, .btn-select {
+      background: #333;
+      color: #fff;
+      font-size: 10px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      user-select: none;
     }
 
-    .controls {
-      text-align: center;
-      margin-top: 20px;
+    #modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
     }
-
-    .d-pad span {
-      display: inline-block;
-      font-size: 30px;
-      margin: 5px;
+    #modal-overlay.active {
+      display: flex;
+    }
+    #modal-content {
+      background: #222;
+      border-radius: 8px;
+      width: 90%; max-width: 400px; max-height: 80%;
+      overflow-y: auto;
+      position: relative;
+    }
+    #modal-close {
+      position: absolute;
+      top: 8px; right: 12px;
+      font-size: 24px; color: #fff;
       cursor: pointer;
     }
-
-    .d-pad span:hover {
-      color: lime;
+    #modal-body {
+      padding: 16px;
+      color: #fff;
+      font-size: 14px;
+      text-align: left;
+      line-height: 1.4;
     }
-
-    .d-pad {
-      margin: 10px 0;
-    }
-
-    .d-pad button {
-      margin: 5px;
-    }
-
-    .buttons-row {
-      display: flex;
-      justify-content: center;
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 10px;
-      margin-top: 10px;
     }
-
-    .buttons-row button {
-      padding: 10px 20px;
+    .gallery-grid img {
+      width: 100%;
+      border-radius: 8px;
     }
-
-    .red { background: red; color: white; }
-    .blue { background: blue; color: white; }
-    .gray { background: gray; color: white; }
   </style>
 </head>
 <body>
-  <div class="console">
-    <header>
-      <div style="text-align:right;">
-        <span style="color:red;">● POWER</span>&nbsp;&nbsp;
-        <span style="color:green;">● BATTERY</span>
-      </div>
-      <h1>HAPPY BIRTHDAY!</h1>
-      <p>Press Start Button</p>
-    </header>
+  <div class="console-frame">
+    <div class="console-header">
+      <span class="power-indicator"></span>
+      <span class="brand">POWER</span>
+      <span class="model">HEYTTL-BOY</span>
+    </div>
 
-    <nav>
-      <button onclick="showSection('message')">MESSAGE</button>
-      <button onclick="showSection('gallery')">GALLERY</button>
-      <button onclick="showSection('music')">MUSIC</button>
-      <button onclick="showSection('tetris')">TETRIS</button>
-    </nav>
-
-    <!-- MESSAGE -->
-    <section id="message" class="section active message">
-      <p>Hi Cel,</p>
-      <p>Selamat ulang tahun ya! 🎉</p>
-      <p>Semoga hari ini dan tahun-tahun mendatang dipenuhi tawa, kebahagiaan, dan kado.</p>
-      <p>Makasih udah selalu ada buatku, jadi partner ngobrol, partner makan, partner jalan-jalan 😄</p>
-      <p>Doa yang terbaik buat kamu:</p>
-      <ul>
-        <li>Sukses di dunia dan akhirat</li>
-        <li>Sehat selalu</li>
-        <li>Jodoh lancar hehehe</li>
-        <li>Dikelilingi orang-orang baik</li>
-      </ul>
-      <p>Celebrating you today and always ❤️</p>
-    </section>
-
-    <!-- GALLERY -->
-    <section id="gallery" class="section gallery">
-      <img id="gallery-img" src="https://via.placeholder.com/400x300?text=Photo+1" alt="Gallery Image">
-      <div class="gallery-buttons">
-        <button onclick="prevImage()">⬅️ Prev</button>
-        <button onclick="nextImage()">Next ➡️</button>
-      </div>
-    </section>
-
-    <!-- MUSIC -->
-    <section id="music" class="section">
-      <h2>Music Player</h2>
-      <audio id="music-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" controls autoplay></audio>
-      <ul>
-        <li>🎵 On Bended Knee - Boyz II Men</li>
-        <li>🎵 I Do It For You - Bryan Adams</li>
-        <li>🎵 Just the Two of Us - Bill Withers</li>
-      </ul>
-    </section>
-
-    <!-- TETRIS -->
-    <section id="tetris" class="section">
-      <h2>Tetris Game</h2>
-      <canvas id="tetris-canvas" width="200" height="400"></canvas>
-      <p>Kontrol: ↑ untuk rotasi, ← → untuk gerak, ↓ untuk jatuhkan.</p>
-    </section>
-
-    <footer>
-      <div class="controls">
-        <div class="d-pad">
-          <span>↑</span><br>
-          <span>← ↓ →</span>
-        </div>
-        <div class="buttons-row">
-          <button class="red">B</button>
-          <button class="red">A</button>
-          <button class="gray">SELECT</button>
-          <button class="gray">START</button>
+    <div class="screen">
+      <div id="screen-content">
+        <div>
+          <p>🎉 Happy Birthday! 🎉</p>
+          <p style="font-size:12px;">Press START</p>
         </div>
       </div>
-    </footer>
+    </div>
+
+    <div class="menu-buttons">
+      <button id="btn-message" class="btn-menu blue">MESSAGE</button>
+      <button id="btn-gallery" class="btn-menu red">GALLERY</button>
+      <button id="btn-music" class="btn-menu purple">MUSIC</button>
+      <button id="btn-tetris" class="btn-menu green">TETRIS</button>
+    </div>
+
+    <div class="bottom-buttons">
+      <div class="btn-start" id="btn-start">START</div>
+      <div class="btn-select">SELECT</div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal-overlay">
+    <div id="modal-content">
+      <span id="modal-close">&times;</span>
+      <div id="modal-body"></div>
+    </div>
   </div>
 
   <script>
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      const target = document.getElementById(id);
-      if (target) target.classList.add('active');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const screen = document.getElementById('screen-content');
+      const modal = document.getElementById('modal-overlay');
+      const modalBody = document.getElementById('modal-body');
+      const closeBtn = document.getElementById('modal-close');
 
-    let currentImageIndex = 0;
-    const images = [
-      "https://via.placeholder.com/400x300?text=Photo+1",
-      "https://via.placeholder.com/400x300?text=Photo+2",
-      "https://via.placeholder.com/400x300?text=Photo+3"
-    ];
-
-    function updateImage() {
-      document.getElementById('gallery-img').src = images[currentImageIndex];
-    }
-
-    function nextImage() {
-      currentImageIndex = (currentImageIndex + 1) % images.length;
-      updateImage();
-    }
-
-    function prevImage() {
-      currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-      updateImage();
-    }
-
-    // TETRIS GAME
-    const canvas = document.getElementById('tetris-canvas');
-    const context = canvas.getContext('2d');
-
-    context.scale(20, 20);
-
-    function createMatrix(w, h) {
-      const matrix = [];
-      while (h--) matrix.push(new Array(w).fill(0));
-      return matrix;
-    }
-
-    function createPiece(type) {
-      const pieces = {
-        T: [[0,1,0],[1,1,1],[0,0,0]],
-        O: [[2,2],[2,2]],
-        L: [[0,0,3],[3,3,3],[0,0,0]],
-        J: [[4,0,0],[4,4,4],[0,0,0]],
-        I: [[0,5,0,0],[0,5,0,0],[0,5,0,0],[0,5,0,0]],
-        S: [[0,6,6],[6,6,0],[0,0,0]],
-        Z: [[7,7,0],[0,7,7],[0,0,0]]
+      document.getElementById('btn-start').onclick = () => {
+        screen.innerHTML = "<p>Choose an option below</p><p style='font-size:12px;'>Use menu buttons</p>";
       };
-      return pieces[type];
-    }
 
-    function drawMatrix(matrix, offset) {
-      matrix.forEach((row, y) => {
-        row.forEach((value, x) => {
-          if (value !== 0) {
-            context.fillStyle = colors[value];
-            context.fillRect(x + offset.x, y + offset.y, 1, 1);
-          }
-        });
+      closeBtn.onclick = () => {
+        modal.classList.remove('active');
+        modalBody.innerHTML = "";
+      };
+
+      // MESSAGE
+      document.getElementById('btn-message').onclick = () => {
+        modal.classList.add('active');
+        modalBody.innerHTML = `
+          <h2>🎂 Birthday Message</h2>
+          <p>Selamat ulang tahun!</p>
+          <p>Semoga sehat selalu dan bahagia terus 🎉</p>
+          <p>Keep shining and smiling 😄</p>
+        `;
+      };
+
+      // GALLERY
+      document.getElementById('btn-gallery').onclick = () => {
+        modal.classList.add('active');
+        modalBody.innerHTML = `
+          <h2>📸 Galeri Foto</h2>
+          <div class="gallery-grid">
+            <img src="assets/images/photo1.jpg" alt="Foto 1">
+            <img src="assets/images/photo2.jpg" alt="Foto 2">
+            <img src="assets/images/photo3.jpg" alt="Foto 3">
+            <img src="assets/images/photo4.jpg" alt="Foto 4">
+          </div>
+        `;
+      };
+
+      // MUSIC
+      document.getElementById('btn-music').onclick = () => {
+        modal.classList.add('active');
+        modalBody.innerHTML = `
+          <h2>🎵 Musik Ulang Tahun</h2>
+          <audio controls autoplay>
+            <source src="assets/audio/happy_birthday.mp3" type="audio/mpeg">
+            Browser tidak mendukung audio.
+          </audio>
+        `;
+      };
+
+      // TETRIS
+      document.getElementById('btn-tetris').onclick = () => {
+        modal.classList.add('active');
+        modalBody.innerHTML = `
+          <h2>🎮 Main Tetris</h2>
+          <iframe src="https://freetetris.org/game.php" width="100%" height="400px" style="border:none;"></iframe>
+        `;
+      };
+
+      // Close modal when clicking outside content
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          modalBody.innerHTML = "";
+        }
       });
-    }
-
-    function merge(arena, player) {
-      player.matrix.forEach((row, y) => {
-        row.forEach((value, x) => {
-          if (value !== 0) {
-            arena[y + player.pos.y][x + player.pos.x] = value;
-          }
-        });
-      });
-    }
-
-    function collide(arena, player) {
-      const m = player.matrix;
-      const o = player.pos;
-      for (let y = 0; y < m.length; ++y) {
-        for (let x = 0; x < m[y].length; ++x) {
-          if (m[y][x] !== 0 &&
-              (arena[y + o.y] &&
-               arena[y + o.y][x + o.x]) !== 0) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
-    function rotate(matrix, dir) {
-      for (let y = 0; y < matrix.length; ++y) {
-        for (let x = 0; x < y; ++x) {
-          [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]];
-        }
-      }
-      if (dir > 0) matrix.forEach(row => row.reverse());
-      else matrix.reverse();
-    }
-
-    function playerDrop() {
-      player.pos.y++;
-      if (collide(arena, player)) {
-        player.pos.y--;
-        merge(arena, player);
-        playerReset();
-        arenaSweep();
-      }
-      dropCounter = 0;
-    }
-
-    function playerMove(dir) {
-      player.pos.x += dir;
-      if (collide(arena, player)) player.pos.x -= dir;
-    }
-
-    function playerRotate(dir) {
-      const pos = player.pos.x;
-      let offset = 1;
-      rotate(player.matrix, dir);
-      while (collide(arena, player)) {
-        player.pos.x += offset;
-        offset = -(offset + (offset > 0 ? 1 : -1));
-        if (offset > player.matrix[0].length) {
-          rotate(player.matrix, -dir);
-          player.pos.x = pos;
-          return;
-        }
-      }
-    }
-
-    function arenaSweep() {
-      outer: for (let y = arena.length - 1; y >= 0; --y) {
-        for (let x = 0; x < arena[y].length; ++x) {
-          if (arena[y][x] === 0) continue outer;
-        }
-        arena.splice(y, 1);
-        arena.unshift(new Array(arena[0].length).fill(0));
-      }
-    }
-
-    const colors = [
-      null,
-      '#FF0D72', 
-      '#0DC2FF',
-      '#0DFF72',
-      '#F538FF',
-      '#FF8E0D',
-      '#FFE138',
-      '#3877FF'
-    ];
-
-    const arena = createMatrix(10, 20);
-    const player = {
-      pos: {x: 0, y: 0},
-      matrix: null
-    };
-
-    function draw() {
-      context.fillStyle = '#000';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      drawMatrix(arena, {x:0, y:0});
-      drawMatrix(player.matrix, player.pos);
-    }
-
-    let dropCounter = 0;
-    let dropInterval = 1000;
-    let lastTime = 0;
-
-    function update(time = 0) {
-      const deltaTime = time - lastTime;
-      lastTime = time;
-      dropCounter += deltaTime;
-      if (dropCounter > dropInterval) {
-        playerDrop();
-      }
-      draw();
-      requestAnimationFrame(update);
-    }
-
-    function playerReset() {
-      const types = 'TJLOSZI';
-      player.matrix = createPiece(types[Math.floor(Math.random() * types.length)]);
-      player.pos.y = 0;
-      player.pos.x = Math.floor(arena[0].length / 2) - Math.floor(player.matrix[0].length / 2);
-      if (collide(arena, player)) {
-        arena.forEach(row => row.fill(0));
-      }
-    }
-
-    document.addEventListener('keydown', event => {
-      if (event.key === 'ArrowLeft') playerMove(-1);
-      else if (event.key === 'ArrowRight') playerMove(1);
-      else if (event.key === 'ArrowDown') playerDrop();
-      else if (event.key === 'ArrowUp') playerRotate(1);
     });
-
-    playerReset();
-    update();
   </script>
 </body>
 </html>
