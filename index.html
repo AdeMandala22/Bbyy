@@ -10,8 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Google Font - Press Start 2P (Pixel Font) -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <!-- SoundCloud Widget API -->
-    <script src="https://w.soundcloud.com/player/api.js"></script>
     
     <style>
         body {
@@ -141,16 +139,10 @@
         .start-game-btn { background-color: #16a34a !important; color: white !important; width: 100%; margin-top: 5px;}
         #home-screen h1 { font-size: 0.9em; margin-bottom: 10px; text-align:center; }
         #home-screen p { font-size: 0.7em; text-align:center; }
-        
-        #soundcloud-player-container { position: absolute; top: -9999px; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     </style>
 </head>
 <body>
-    <div id="soundcloud-player-container">
-        <iframe id="soundcloud-player" width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
-            src="">
-        </iframe>
-    </div>
+    <audio id="main-audio-player" loop></audio>
 
     <div class="console-body">
         <div class="console-top-bar"><div class="power-led"></div><div class="brand-name">NEXTIME-BOY</div><div></div></div>
@@ -165,7 +157,7 @@
         <div class="menu-buttons-grid">
             <button onclick="showScreen('message-screen'); startMessages();" class="main-button btn-message">PESAN</button>
             <button onclick="showScreen('gallery-screen'); startGallery();" class="main-button btn-gallery">GALERI</button>
-            <button onclick="showScreen('music-screen'); updateMusicPlayerUI();" class="main-button btn-music">MUSIK</button>
+            <button onclick="showScreen('music-screen');" class="main-button btn-music">MUSIK</button>
             <button onclick="showScreen('tetris-screen'); initTetris();" class="main-button btn-tetris">TETRIS</button>
         </div>
         <div class="controls-area">
@@ -177,101 +169,20 @@
 
 <script>
     // --- Variabel Global ---
-    let scPlayer;
-    let isPlayerReady = false;
     let audioSystemsInitialized = false;
 
-    // --- Konfigurasi Playlist SoundCloud ---
-    // URL perlu dalam format yang boleh dibenamkan. Anda boleh mendapatkannya dari butang "Share" > "Embed" di SoundCloud.
-    // Saya telah mencari beberapa contoh. Gantikan dengan URL lagu anda.
-    const soundCloudPlaylist = [
-        { url: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/139589329', title: "On Bended Knee", artist: "Boyz II Men (Cover)" },
-        { url: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/114991138', title: "Nothing's Gonna Change...", artist: "George Benson" },
-        { url: 'https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/278065352', title: "I'll Make Love To You", artist: "Boyz II Men" },
+    // --- Konfigurasi Playlist Muzik (Fail Lokal) ---
+    // GANTIKAN DENGAN PATH KE FAIL MUZIK DAN GAMBAR ANDA DI DALAM FOLDER 'asset/'
+    const musicPlaylist = [
+        { src: "asset/on-bended-knee.mp3", title: "On Bended Knee", artist: "Boyz II Men", artwork: "asset/art1.jpg" },
+        { src: "asset/nothings-gonna-change.mp3", title: "Nothing's Gonna Change...", artist: "George Benson", artwork: "asset/art2.jpg" },
+        { src: "asset/ill-make-love.mp3", title: "I'll Make Love To You", artist: "Boyz II Men", artwork: "asset/art3.jpg" },
+        { src: "asset/vitamin-u.mp3", title: "VITAMIN U", artist: "Paul Partohap", artwork: "asset/art4.jpg" },
     ];
     let currentSongIndex = 0;
-    let isPlaying = false;
-    let progressInterval;
 
-    // --- Inisialisasi SoundCloud ---
-    const scIframe = document.getElementById('soundcloud-player');
-    
-    function initSoundCloudPlayer(trackIndex) {
-        if (trackIndex < 0 || trackIndex >= soundCloudPlaylist.length) return;
-        
-        const trackUrl = soundCloudPlaylist[trackIndex].url;
-        // Hanya set src jika berbeza untuk mengelakkan muat semula yang tidak perlu
-        if (scIframe.src !== trackUrl) {
-            scIframe.src = trackUrl;
-        }
-
-        // Cipta widget baru jika belum ada atau iframe telah dimuat semula
-        scPlayer = SC.Widget(scIframe);
-
-        scPlayer.bind(SC.Widget.Events.READY, () => {
-            console.log("Pemain SoundCloud sedia.");
-            isPlayerReady = true;
-            scPlayer.setVolume(70);
-            
-            // Autoplay hanya jika audio telah diinisialisasi
-            if (audioSystemsInitialized) {
-                scPlayer.play();
-            }
-            
-            // Ikat event listener di sini sekali sahaja setiap kali pemain sedia
-            scPlayer.bind(SC.Widget.Events.PLAY_PROGRESS, (progressData) => {
-                const progressPercent = (progressData.currentPosition / progressData.loadedProgress) / progressData.duration * 10000;
-                 if (isFinite(progressPercent)) {
-                    musicProgressEl.style.width = `${progressPercent}%`;
-                }
-            });
-
-            scPlayer.bind(SC.Widget.Events.PLAY, () => {
-                isPlaying = true;
-                updatePlayPauseIcon();
-            });
-
-            scPlayer.bind(SC.Widget.Events.PAUSE, () => {
-                isPlaying = false;
-                updatePlayPauseIcon();
-            });
-
-            scPlayer.bind(SC.Widget.Events.FINISH, () => {
-                console.log("Lagu selesai, memainkan seterusnya...");
-                playNextSong();
-            });
-        });
-    }
-
-    // --- Fungsi Inisialisasi Audio ---
-    function initAudioSystems() { 
-        if (audioSystemsInitialized) return;
-        audioSystemsInitialized = true;
-        console.log("Interaksi pertama dikesan. Memulakan audio...");
-        initSoundCloudPlayer(currentSongIndex);
-    }
-
-    // --- Logik Utama Aplikasi ---
-    const screens = { 'home-screen': document.getElementById('home-screen'), 'message-screen': document.getElementById('message-screen'), 'gallery-screen': document.getElementById('gallery-screen'), 'music-screen': document.getElementById('music-screen'), 'tetris-screen': document.getElementById('tetris-screen') };
-    let currentVisibleScreen = 'home-screen';
-
-    function showScreen(screenId) {
-        if (!audioSystemsInitialized) {
-            initAudioSystems();
-        }
-        
-        if (screens[currentVisibleScreen]) screens[currentVisibleScreen].classList.remove('active');
-        if (screens[screenId]) {
-            screens[screenId].classList.add('active');
-            currentVisibleScreen = screenId;
-        }
-        
-        if (screenId === 'music-screen') {
-            updateMusicPlayerUI();
-        }
-    }
-
-    // --- Logik Pemutar Musik (SoundCloud) ---
+    // --- Pemain Audio HTML5 ---
+    const audioPlayer = document.getElementById('main-audio-player');
     const albumArtEl = document.getElementById('albumArt');
     const songTitleEl = document.getElementById('songTitle');
     const songArtistEl = document.getElementById('songArtist');
@@ -280,63 +191,98 @@
     const nextSongBtn = document.getElementById('nextSongBtn');
     const prevSongBtn = document.getElementById('prevSongBtn');
     const playlistContainer = document.getElementById('playlistContainer');
-    
-    function loadSong(index) {
-        if (!isPlayerReady || index < 0 || index >= soundCloudPlaylist.length) return;
+
+    function loadSong(index, autoplay = false) {
+        if (index < 0 || index >= musicPlaylist.length) return;
         currentSongIndex = index;
-        initSoundCloudPlayer(index); // Ini akan memuat lagu baru
+        const song = musicPlaylist[index];
+        audioPlayer.src = song.src;
         updateMusicPlayerUI();
+        if (autoplay) {
+            audioPlayer.play().catch(e => console.error("Ralat autoplay:", e));
+        }
     }
 
     function updateMusicPlayerUI() {
-        const song = soundCloudPlaylist[currentSongIndex];
+        const song = musicPlaylist[currentSongIndex];
         songTitleEl.textContent = song.title;
         songArtistEl.textContent = song.artist;
-        // SoundCloud tidak menyediakan API artwork yang mudah, jadi guna placeholder
-        albumArtEl.src = 'https://placehold.co/60x60/ff5500/ffffff?text=SC';
+        albumArtEl.src = song.artwork || 'https://placehold.co/60x60/8b5cf6/ffffff?text=Art';
         updatePlayPauseIcon();
     }
-
+    
     function updatePlayPauseIcon() {
-        playPauseBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
+        playPauseBtn.innerHTML = audioPlayer.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
     }
-
+    
     function togglePlayPause() {
-        if (!isPlayerReady) return;
-        scPlayer.toggle();
-    }
-    function playNextSong() {
-        const newIndex = (currentSongIndex + 1) % soundCloudPlaylist.length;
-        loadSong(newIndex);
-    }
-    function playPrevSong() {
-        const newIndex = (currentSongIndex - 1 + soundCloudPlaylist.length) % soundCloudPlaylist.length;
-        loadSong(newIndex);
+        if (!audioSystemsInitialized) initAudioSystems(); 
+        if (audioPlayer.paused) {
+            audioPlayer.play().catch(e => console.error("Ralat play:", e));
+        } else {
+            audioPlayer.pause();
+        }
     }
 
+    function playNextSong() {
+        const newIndex = (currentSongIndex + 1) % musicPlaylist.length;
+        loadSong(newIndex, true);
+    }
+
+    function playPrevSong() {
+        const newIndex = (currentSongIndex - 1 + musicPlaylist.length) % musicPlaylist.length;
+        loadSong(newIndex, true);
+    }
+    
     playPauseBtn.addEventListener('click', togglePlayPause);
     nextSongBtn.addEventListener('click', playNextSong);
     prevSongBtn.addEventListener('click', playPrevSong);
-    
+    audioPlayer.addEventListener('ended', playNextSong);
+    audioPlayer.addEventListener('play', updatePlayPauseIcon);
+    audioPlayer.addEventListener('pause', updatePlayPauseIcon);
+    audioPlayer.addEventListener('timeupdate', () => {
+        if (audioPlayer.duration) {
+            const progressPercent = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            musicProgressEl.style.width = `${progressPercent}%`;
+        }
+    });
+
     function populatePlaylist() {
         playlistContainer.innerHTML = '';
-        soundCloudPlaylist.forEach((song, index) => {
+        musicPlaylist.forEach((song, index) => {
             const div = document.createElement('div');
             div.textContent = `${index + 1}. ${song.title}`;
-            div.onclick = () => { loadSong(index); };
+            div.onclick = () => { loadSong(index, true); };
             playlistContainer.appendChild(div);
         });
     }
 
-    // --- Fungsi Inisialisasi Skrin ---
-    function startMessages() {
-        currentMessageIdx = 0;
-        nextMessageBtn.style.display = 'block';
-        skipMessageBtn.style.display = 'block';
-        displayMessage();
+    // --- Fungsi Inisialisasi Audio ---
+    function initAudioSystems() { 
+        if (audioSystemsInitialized) return;
+        audioSystemsInitialized = true;
+        console.log("Interaksi pertama dikesan. Memulakan audio...");
+        audioPlayer.play().catch(e => {
+            console.warn("Autoplay digagalkan oleh pelayar. Ini adalah perkara biasa.", e);
+        });
     }
-    function startGallery() { currentImageIdx = 0; if (galleryImages.length > 0) displayImage(); }
-    function startInternalMusicPlayer() { populatePlaylist(); updateMusicPlayerUI(); } // Renamed for clarity
+
+    // --- Logik Utama Aplikasi ---
+    const screens = { 'home-screen': document.getElementById('home-screen'), 'message-screen': document.getElementById('message-screen'), 'gallery-screen': document.getElementById('gallery-screen'), 'music-screen': document.getElementById('music-screen'), 'tetris-screen': document.getElementById('tetris-screen') };
+    let currentVisibleScreen = 'home-screen';
+
+    function showScreen(screenId) {
+        if (screens[currentVisibleScreen]) screens[currentVisibleScreen].classList.remove('active');
+        if (screens[screenId]) {
+            screens[screenId].classList.add('active');
+            currentVisibleScreen = screenId;
+        }
+        
+        if (screenId === 'music-screen') {
+            updateMusicPlayerUI();
+            populatePlaylist();
+        }
+    }
 
     // --- Logik Mesej ---
     const messages = [ "Hai Cei, Selamat Ulang Tahun ya!", "Semoga panjang umur, sehat selalu...", "Tambah dewasa, tambah bijaksana...", "Semua doa terbaik untukmu!", "Ini ada sedikit kejutan buat kamu...", "CIEEEE KEPO YAAA WKWKW", "Pokoknya, HAPPY BIRTHDAY!", "Jangan lupa traktirannya! ;)", "Udah ya, itu aja pesannya. Hehe." ];
@@ -345,14 +291,18 @@
     const nextMessageBtn = document.getElementById('nextMessageBtn');
     const skipMessageBtn = document.getElementById('skipMessageBtn');
     function displayMessage() { if (currentMessageIdx < messages.length) { messageContentEl.textContent = messages[currentMessageIdx]; } else { messageContentEl.textContent = "Pesan Selesai!"; nextMessageBtn.style.display = 'none'; skipMessageBtn.style.display = 'none';}}
+    function startMessages() { currentMessageIdx = 0; nextMessageBtn.style.display = 'block'; skipMessageBtn.style.display = 'block'; displayMessage(); }
     nextMessageBtn.addEventListener('click', () => { currentMessageIdx++; displayMessage(); });
     skipMessageBtn.addEventListener('click', () => { currentMessageIdx = messages.length - 1; displayMessage(); });
 
-    // --- Logik Galeri ---
-    const galleryImages = [ { src: "asset/1.jpg", caption: "Foto 1" }, { src: "asset/2.jpg", caption: "Foto 2" }, { src: "asset/3.jpg", caption: "Foto 3" }, { src: "asset/4.jpg", caption: "Foto 4" }, { src: "asset/5.jpg", caption: "Foto 5" } ];
+    // --- Logik Galeri (DIPERBAIKI) ---
+    const galleryImages = [ { src: "assets/1.jpg", caption: "" }, { src: "assets/2.jpg", caption: "" }, { src: "assets/3.jpg", caption: "" }, { src: "assets/4.jpg", caption: "" }, { src: "assets/5.jpg", caption: "" }, { src: "assets/6.jpg", caption: "" }, { src: "assets/7.jpg", caption: "" }, { src: "assets/8.jpg", caption: "" }, { src: "assets/9.jpg", caption: "" }, { src: "assets/10.jpg", caption: "" }, { src: "assets/11.jpg", caption: "" }, { src: "assets/12.jpg", caption: "" }, { src: "assets/13.jpg", caption: "" }, { src: "assets/14.jpg", caption: "" }, { src: "assets/15.jpg", caption: "" } ];
     let currentImageIdx = 0;
     const galleryImageEl = document.getElementById('galleryImage');
     const galleryCounterEl = document.getElementById('galleryCounter');
+    const nextImageBtn = document.getElementById('nextImageBtn'); // Pemboleh ubah yang hilang
+    const printImageBtn = document.getElementById('printImageBtn'); // Pemboleh ubah yang hilang
+
     function displayImage() {
         if (galleryImages.length === 0) return;
         const imgData = galleryImages[currentImageIdx];
@@ -361,6 +311,9 @@
         galleryImageEl.src = imgData.src; galleryImageEl.alt = "Memuat...";
         galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
     }
+    function startGallery() { currentImageIdx = 0; if (galleryImages.length > 0) displayImage(); }
+    
+    // Event listener kini menggunakan pemboleh ubah yang telah diisytiharkan
     nextImageBtn.addEventListener('click', () => { if (galleryImages.length > 0) { currentImageIdx = (currentImageIdx + 1) % galleryImages.length; displayImage(); } });
     printImageBtn.addEventListener('click', () => { if (galleryImages.length > 0) alert(`"Mencetak" ${galleryImages[currentImageIdx].caption}`); });
     
@@ -374,8 +327,10 @@
     tetrisStartBtn.addEventListener('click',startTetrisGame);tetrisLeftBtn.addEventListener('click',()=>moveHorizontal(-1));tetrisRightBtn.addEventListener('click',()=>moveHorizontal(1));tetrisRotateBtn.addEventListener('click',rotatePiece);document.getElementById('dpadUp').addEventListener('click',rotatePiece);document.getElementById('dpadLeft').addEventListener('click',()=>moveHorizontal(-1));document.getElementById('dpadRight').addEventListener('click',()=>moveHorizontal(1));document.getElementById('dpadDown').addEventListener('click',()=>{gameRunning&&moveDown()});document.getElementById('buttonA').addEventListener('click',rotatePiece);document.getElementById('buttonB').addEventListener('click',()=>{'tetris-screen'===currentVisibleScreen&&gameRunning&&moveDown()});
 
     // --- Inisialisasi Utama ---
-    showScreen('home-screen'); 
+    // Memuat lagu pertama ke dalam pemain tetapi tidak memainkannya lagi
+    loadSong(0); 
     startMessages();
+    // Menunggu interaksi pengguna pertama untuk memulakan audio
     ['click', 'touchstart', 'keydown'].forEach(eventName => { 
         document.body.addEventListener(eventName, initAudioSystems, { once: true });
     });
