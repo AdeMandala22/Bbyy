@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Bbyy Day's!</title>
+    <title>Kejutan Ulang Tahun Retro!</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -296,7 +296,7 @@
     <div class="console-body">
         <div class="console-top-bar">
             <div class="power-led"></div>
-            <div class="brand-name">OhMyHades</div>
+            <div class="brand-name">NEXTIME-BOY</div>
             <div></div> <!-- Placeholder for symmetry -->
         </div>
 
@@ -319,8 +319,9 @@
             <!-- Gallery Screen -->
             <div id="gallery-screen" class="screen-content">
                 <h2 class="text-center text-lg mb-1">Galeri Foto</h2>
-                <p class="text-xs text-center mb-1" id="gallery-title">OhMyHades Zone</p>
-                <img id="galleryImage" src="https://drive.google.com/file/d/19RofJYvdvfppmHKlJVBzP_rUalu6Ihzc/view?usp=drivesdk" alt="Foto Galeri">
+                <p class="text-xs text-center mb-1" id="gallery-title">HEYML PHOTOSBOX</p>
+                <!-- Gambar akan dimuat oleh JavaScript. onerror untuk fallback jika link Google Drive bermasalah -->
+                <img id="galleryImage" src="" alt="Foto Galeri" onerror="this.src='https://placehold.co/150x100/25392b/9effae?text=Error+Muat'; this.alt='Gagal memuat gambar';">
                 <p id="galleryCounter" class="text-xs text-center my-1">Mencetak foto 1 dari 4...</p>
                 <button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>
                 <button id="printImageBtn" class="nav-button btn-skip">Mulai Cetak</button>
@@ -409,60 +410,46 @@
     let currentVisibleScreen = 'home-screen';
 
     // --- Sound Effects with Tone.js ---
-    // Initialize Tone.Players with onload and onerror for better debugging
-    const clickSound = new Tone.Player({
-        url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/Button-SoundBible.com-1420500901.mp3",
-        onload: () => console.log("Click sound loaded."),
-        onerror: (e) => console.error("Error loading click sound:", e)
-    }).toDestination();
+    // Efek suara berikut dialih keluar kerana URL sumber tidak dapat diakses
+    // const clickSound = new Tone.Player({
+    //     url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/Button-SoundBible.com-1420500901.mp3",
+    //     onload: () => console.log("Click sound loaded."),
+    //     onerror: (e) => console.error("Error loading click sound:", e)
+    // }).toDestination();
 
-    const tetrisMoveSound = new Tone.Player({
-        url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/DM-CGS-21.mp3",
-        onload: () => console.log("Tetris move sound loaded."),
-        onerror: (e) => console.error("Error loading tetris move sound:", e)
-    }).toDestination();
+    // const tetrisMoveSound = new Tone.Player({
+    //     url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/DM-CGS-21.mp3",
+    //     onload: () => console.log("Tetris move sound loaded."),
+    //     onerror: (e) => console.error("Error loading tetris move sound:", e)
+    // }).toDestination();
 
-    const tetrisLineClearSound = new Tone.Player({
-        url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/tick_002.ogg",
-        onload: () => console.log("Tetris line clear sound loaded."),
-        onerror: (e) => console.error("Error loading tetris line clear sound:", e)
-    }).toDestination();
+    // const tetrisLineClearSound = new Tone.Player({
+    //     url: "https://cdn.jsdelivr.net/gh/krsnachandra/asset@main/sound/tick_002.ogg",
+    //     onload: () => console.log("Tetris line clear sound loaded."),
+    //     onerror: (e) => console.error("Error loading tetris line clear sound:", e)
+    // }).toDestination();
     
-    // musicPlayer is also a Tone.Player, initialized similarly for consistency
     const musicPlayer = new Tone.Player({
-        // URL will be set by loadSong method
         onload: () => console.log("Music file loaded into musicPlayer."),
         onerror: (e) => console.error("Error loading music file into musicPlayer:", e)
     }).toDestination();
 
-    let musicSynth; // For birthday song if no file
+    let musicSynth; 
 
-    // Helper function to play Tone.Player sounds safely
-    function playTonePlayerSound(playerInstance, soundName = "Sound") {
-        if (Tone.context.state !== 'running') {
-            Tone.start().then(() => {
-                if (playerInstance.loaded) {
-                    playerInstance.start();
-                } else {
-                    console.warn(`${soundName} not loaded when attempting to play (after Tone.start).`);
-                }
-            }).catch(e => console.error(`Error starting Tone.js for ${soundName}:`, e));
-        } else {
-            if (playerInstance.loaded) {
-                playerInstance.start();
-            } else {
-                console.warn(`${soundName} not loaded (context already running).`);
-            }
+    // Fungsi playTonePlayerSound tidak lagi diperlukan jika semua pemain efek suara dialih keluar
+    // function playTonePlayerSound(playerInstance, soundName = "Sound") { ... }
+
+    // Fungsi untuk bunyi klik kini tidak melakukan apa-apa atau boleh diganti dengan alternatif jika ada
+    function playClickSound() {
+        // console.log("Click sound (disabled)"); // Untuk debugging jika diperlukan
+        if (Tone.context.state !== 'running') { // Masih penting untuk memulakan konteks audio untuk musik
+             Tone.start().catch(e => console.error("Error starting Tone.js for music:", e));
         }
     }
 
-    // Function to play a click sound (uses the helper)
-    function playClickSound() {
-        playTonePlayerSound(clickSound, "Click sound");
-    }
 
     function showScreen(screenId) {
-        playClickSound(); // Attempt to play click sound
+        playClickSound(); // Masih panggil untuk memulakan konteks Tone.js jika belum
         if (screens[currentVisibleScreen]) {
             screens[currentVisibleScreen].classList.remove('active');
         }
@@ -520,11 +507,12 @@
     });
 
     // --- Gallery Logic ---
+    // GANTI FILE_ID_ANDA_1, FILE_ID_ANDA_2, DST DENGAN ID FILE GOOGLE DRIVE ANDA YANG SEBENARNYA
     const galleryImages = [
-        { src: "https://placehold.co/150x100/25392b/9effae?text=Foto+1", caption: "Kenangan Pertama" },
-        { src: "https://placehold.co/150x100/ef4444/ffffff?text=Foto+Lucu", caption: "Momen Lucu" },
-        { src: "https://placehold.co/150x100/3b82f6/ffffff?text=Jalan-Jalan", caption: "Saat Kita Jalan-Jalan" },
-        { src: "https://placehold.co/150x100/8b5cf6/ffffff?text=Spesial%21", caption: "Foto Paling Spesial" }
+        { src: "https://drive.google.com/uc?export=view&id=FILE_ID_ANDA_1", caption: "Kenangan Pertama dari Drive" },
+        { src: "https://drive.google.com/uc?export=view&id=FILE_ID_ANDA_2", caption: "Momen Lucu dari Drive" },
+        { src: "https://drive.google.com/uc?export=view&id=FILE_ID_ANDA_3", caption: "Jalan-Jalan dari Drive" },
+        { src: "https://placehold.co/150x100/8b5cf6/ffffff?text=Foto+Lokal", caption: "Foto Paling Spesial (Lokal)" } // Contoh jika ada yang bukan dari Drive
     ];
     let currentImageIdx = 0;
     const galleryImageEl = document.getElementById('galleryImage');
@@ -534,10 +522,15 @@
     const printImageBtn = document.getElementById('printImageBtn');
 
     function displayImage() {
+        if (galleryImages.length === 0) {
+            galleryImageEl.src = 'https://placehold.co/150x100/25392b/9effae?text=Galeri+Kosong';
+            galleryCounterEl.textContent = "Tidak ada foto di galeri.";
+            return;
+        }
         const imgData = galleryImages[currentImageIdx];
-        galleryImageEl.src = imgData.src;
+        galleryImageEl.src = imgData.src; 
         galleryImageEl.alt = imgData.caption;
-        galleryCounterEl.textContent = `Mencetak foto ${currentImageIdx + 1} dari ${galleryImages.length}... (${imgData.caption})`;
+        galleryCounterEl.textContent = `Foto ${currentImageIdx + 1} dari ${galleryImages.length}: ${imgData.caption}`;
     }
 
     function startGallery() {
@@ -546,13 +539,18 @@
     }
     nextImageBtn.addEventListener('click', () => {
         playClickSound();
-        currentImageIdx = (currentImageIdx + 1) % galleryImages.length;
-        displayImage();
+        if (galleryImages.length > 0) {
+            currentImageIdx = (currentImageIdx + 1) % galleryImages.length;
+            displayImage();
+        }
     });
     printImageBtn.addEventListener('click', () => {
         playClickSound();
-        // Replace alert with a custom modal or on-screen message in a real app
-        alert(`"Mencetak" ${galleryImages[currentImageIdx].caption}... (Simulasi)`);
+        if (galleryImages.length > 0) {
+            alert(`"Mencetak" ${galleryImages[currentImageIdx].caption}... (Simulasi)`);
+        } else {
+            alert("Tidak ada foto untuk dicetak.");
+        }
     });
 
 
@@ -585,7 +583,7 @@
         clearInterval(musicInterval);
         musicProgressEl.style.width = '0%';
         const song = playlist[songIndex];
-        currentSongIdx = songIndex; // Update currentSongIdx
+        currentSongIdx = songIndex; 
         songTitleEl.textContent = song.title;
         songArtistEl.textContent = song.artist;
         albumArtEl.src = `https://placehold.co/60x60/25392b/9effae?text=${song.artist.substring(0,3)}`; 
@@ -603,12 +601,14 @@
             musicPlayer.load(song.src)
                 .then(() => { 
                     console.log(song.title + " dimuat"); 
-                    if(isPlaying) { // If was playing, continue playing new song
+                    if(isPlaying) { 
                         musicPlayer.start();
                         startMusicProgressBar();
                     }
                 })
-                .catch(e => console.error("Ralat memuat lagu:", e));
+                .catch(e => {
+                    console.error("Ralat memuat lagu: ", song.title, e);
+                });
         }
         updatePlayPauseIcon();
     }
@@ -627,25 +627,39 @@
             { time: "1:3", note: "G4", duration: "4n" }, { time: "1:4", note: "F4", duration: "2n" }
         ];
         melody.forEach(n => musicSynth.triggerAttackRelease(n.note, n.duration, now + Tone.Time(n.time).toSeconds()));
-        startMusicProgressBar(); // Start progress for HBD song
+        startMusicProgressBar(); 
     }
 
     function startMusicProgressBar() {
         clearInterval(musicInterval);
         let progress = 0;
-        const songDuration = playlist[currentSongIdx].duration; // Get duration from playlist
+        if (currentSongIdx < 0 || currentSongIdx >= playlist.length) return;
+        const songDuration = playlist[currentSongIdx].duration; 
+        
+        if (songDuration <= 0) { 
+            musicProgressEl.style.width = '0%';
+            return;
+        }
         
         if (playlist[currentSongIdx].src === "HBDSong" || (musicPlayer.loaded && isPlaying)) {
             musicInterval = setInterval(() => {
-                let currentTime;
+                let currentTime = 0; 
                 if (playlist[currentSongIdx].src === "HBDSong") {
-                    // For synth, simulate progress based on its defined duration
-                    progress += 1; // Increment progress every second
+                    progress += 1; 
                     currentTime = progress;
-                } else if (musicPlayer.loaded) {
-                    currentTime = musicPlayer.now() % songDuration; // Use Tone.Player's current time
-                } else {
-                    return; // Should not happen if isPlaying is true and loaded
+                } else if (musicPlayer.loaded && musicPlayer.state === "started") { 
+                     if (musicPlayer.buffer && musicPlayer.buffer.duration) {
+                         currentTime = musicPlayer.now() % musicPlayer.buffer.duration;
+                     } else {
+                         currentTime = progress; 
+                         progress++;
+                     }
+                } else if (isPlaying) { 
+                    progress += 1;
+                    currentTime = progress;
+                } else { 
+                    clearInterval(musicInterval);
+                    return;
                 }
 
                 let percent = (currentTime / songDuration) * 100;
@@ -653,16 +667,15 @@
 
                 if (percent >= 100) {
                     clearInterval(musicInterval);
-                    if (playlist[currentSongIdx].src === "HBDSong" || isPlaying) { // If it was playing, mark as stopped
+                    if (playlist[currentSongIdx].src === "HBDSong" || isPlaying) { 
                         isPlaying = false;
                         updatePlayPauseIcon();
-                         musicProgressEl.style.width = '0%'; // Reset for next play
+                         musicProgressEl.style.width = '0%'; 
                     }
                 }
             }, 1000);
         }
     }
-
 
     function updatePlayPauseIcon() {
         playPauseBtn.innerHTML = isPlaying ? '<i class="fas fa-pause"></i>' : '<i class="fas fa-play"></i>';
@@ -678,17 +691,19 @@
     }
 
     function actualTogglePlay() {
+        if (currentSongIdx < 0 || currentSongIdx >= playlist.length) {
+            console.warn("Indeks lagu tidak valid.");
+            return;
+        }
+
         const currentSong = playlist[currentSongIdx];
         if (currentSong.src === "HBDSong") {
             if (!isPlaying) {
                 playHBDMelody();
                 isPlaying = true;
             } else {
-                // Stopping a running PolySynth sequence precisely is complex.
-                // For simplicity, we'll just toggle state and stop Tone.Transport if it was used for it.
-                // musicSynth.releaseAll(); // Could be an option if notes are sustained.
-                if (musicSynth && Tone.Transport.state === "started") Tone.Transport.stop(); // Stop transport if HBD used it.
-                clearInterval(musicInterval); // Stop its progress bar.
+                if (musicSynth && Tone.Transport.state === "started") Tone.Transport.stop(); 
+                clearInterval(musicInterval); 
                 isPlaying = false;
             }
         } else {
@@ -702,17 +717,14 @@
                 }
                 isPlaying = !isPlaying;
             } else {
-                // If not loaded, loadSong should have been called.
-                // If user clicks play while still loading:
-                console.warn("Lagu belum dimuat. Cuba lagi selepas beberapa ketika.");
-                // Optionally trigger load again if it failed or wasn't started
-                // loadSong(currentSongIdx); 
-                // isPlaying = true; // Optimistically set, will start if loadSong makes it play
+                console.warn("Lagu belum dimuat. Cuba lagi selepas beberapa ketika atau pilih lagu lain.");
+                if (!musicPlayer.loaded && musicPlayer.buffer === null) { 
+                    loadSong(currentSongIdx); 
+                }
             }
         }
         updatePlayPauseIcon();
     }
-
 
     playPauseBtn.addEventListener('click', togglePlayPause);
 
@@ -736,9 +748,17 @@
             div.textContent = `${index + 1}. ${song.title} - ${song.artist} (${formatTime(song.duration)})`;
             div.onclick = () => {
                 playClickSound();
-                isPlaying = false; // Stop previous song before loading new one
+                if (isPlaying) {
+                    if (playlist[currentSongIdx].src === "HBDSong") {
+                        if (musicSynth && Tone.Transport.state === "started") Tone.Transport.stop();
+                    } else if (musicPlayer.loaded) {
+                        musicPlayer.stop();
+                    }
+                    clearInterval(musicInterval);
+                    isPlaying = false; 
+                    updatePlayPauseIcon(); 
+                }
                 loadSong(index);
-                // togglePlayPause(); // Optional: uncomment to autoplay on playlist click
             };
             playlistContainerEl.appendChild(div);
         });
@@ -746,7 +766,13 @@
 
     function startMusicPlayer(){
         populatePlaylist();
-        loadSong(currentSongIdx); // Load the first song by default or last played
+        if(playlist.length > 0) {
+             loadSong(currentSongIdx < playlist.length ? currentSongIdx : 0);
+        } else {
+            console.warn("Playlist musik kosong.");
+            songTitleEl.textContent = "Playlist Kosong";
+            songArtistEl.textContent = "-";
+        }
     }
 
 
@@ -895,13 +921,13 @@
             }
         }
         if (linesToClear > 0) {
-            playTonePlayerSound(tetrisLineClearSound, "Tetris line clear sound");
+            // playTonePlayerSound(tetrisLineClearSound, "Tetris line clear sound"); // Dialih keluar
             score += linesToClear * 100 * level; 
             linesCleared += linesToClear;
-            if (linesCleared > 0 && linesCleared % 10 === 0) { // Level up every 10 lines
+            if (linesCleared > 0 && linesCleared % 10 === 0) { 
                  level++;
-                 clearInterval(gameInterval); // Clear old interval
-                 gameInterval = setInterval(gameLoop, 1000 / level); // Set new speed
+                 clearInterval(gameInterval); 
+                 gameInterval = setInterval(gameLoop, Math.max(200, 1000 - (level -1) * 50) ); 
             }
             updateTetrisUI();
         }
@@ -922,7 +948,7 @@
     
     function moveHorizontal(direction) { 
         if(!gameRunning) return;
-        playTonePlayerSound(tetrisMoveSound, "Tetris move sound");
+        // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
         undrawPiece();
         if (!checkCollision(currentRow, currentCol + direction, currentPiece.shape)) {
             currentCol += direction;
@@ -932,7 +958,7 @@
 
     function rotatePiece() {
         if(!gameRunning) return;
-        playTonePlayerSound(tetrisMoveSound, "Tetris move sound");
+        // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
         undrawPiece();
         const originalShape = currentPiece.shape;
         const N = originalShape.length; 
@@ -960,8 +986,7 @@
         clearInterval(gameInterval);
         gameRunning = false;
         tetrisStartBtn.textContent = "MULAI LAGI";
-        // Replace alert with a custom modal or on-screen message
-        setTimeout(() => alert(`GAME OVER! Skor: ${score}`), 100); // Timeout to allow screen to update
+        setTimeout(() => alert(`GAME OVER! Skor: ${score}`), 100); 
     }
 
     function gameLoop() {
@@ -981,10 +1006,11 @@
         linesCleared = 0;
         updateTetrisUI();
         spawnPiece();
-        drawPiece(); // Draw initial piece
+        drawGrid(); 
+        drawPiece(); 
         gameRunning = true;
         tetrisStartBtn.textContent = "BERMAIN...";
-        gameInterval = setInterval(gameLoop, 1000 / level); 
+        gameInterval = setInterval(gameLoop, Math.max(200, 1000 - (level-1)*50)); 
     }
     
     function initTetris() { 
@@ -1005,15 +1031,15 @@
     document.getElementById('dpadRight').addEventListener('click', () => moveHorizontal(1));
     document.getElementById('dpadDown').addEventListener('click', () => { 
         if(gameRunning) {
-            playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Sound for soft drop
-            moveDown(); // Perform a soft drop
+            // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
+            moveDown(); 
         }
     });
     document.getElementById('buttonA').addEventListener('click', rotatePiece); 
     document.getElementById('buttonB').addEventListener('click', () => { 
         if(currentVisibleScreen === 'tetris-screen' && gameRunning){
-            playTonePlayerSound(tetrisMoveSound, "Tetris move sound");
-            moveDown(); // B button also does a soft drop
+            // playTonePlayerSound(tetrisMoveSound, "Tetris move sound"); // Dialih keluar
+            moveDown(); 
         } else {
             playClickSound(); 
         }
@@ -1022,20 +1048,15 @@
     // Initialize
     showScreen('home-screen'); 
 
-    // Attempt to unlock audio context on first user interaction anywhere
-    // This is crucial for audio to work in modern browsers.
     function initializeAudioContext() {
         if (Tone.context.state !== 'running') {
             Tone.start().then(() => {
                 console.log("Konteks Audio Tone.js berjaya dimulakan oleh interaksi pengguna.");
-                // Pre-load sounds or confirm they are loading
-                // clickSound, tetrisMoveSound, etc., start loading on creation
             }).catch(e => {
                 console.warn("Gagal memulakan Tone.js AudioContext secara automatik:", e, "Menunggu interaksi pengguna seterusnya.");
             });
         }
     }
-    // Try to initialize on first click, touch, or key press
     ['click', 'touchstart', 'keydown'].forEach(eventName => {
         document.body.addEventListener(eventName, initializeAudioContext, { once: true });
     });
