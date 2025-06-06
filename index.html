@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .screen {
+      border: 10px solid #0f0;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      aspect-ratio: 4 / 3;
+      position: relative;
+      box-shadow: 0 0 20px #0f0;
+      background-color: #000;
+    }
+
+    .top-bar {
+      text-align: center;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    .display {
+      white-space: pre-line;
+      line-height: 1.5;
+      font-size: 1em;
+      text-align: center;
+    }
+
+    .controls {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      text-align: center;
+    }
+
+    .btn {
+      border: 2px solid #0f0;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .btn:hover {
+      background-color: #0f0;
+      color: #000;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7em;
+      opacity: 0.6;
+    }
+
+    /* Hide Scroll */
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="screen">
+    <div class="top-bar">POWER • HEYTML-BOY</div>
+    <div class="display" id="mainDisplay"></div>
+    <div class="controls">
+      <div></div>
+      <div class="btn" onclick="navigate('↑')">↑</div>
+      <div></div>
+      <div class="btn" onclick="navigate('←')">←</div>
+      <div class="btn" onclick="navigate('START')">START</div>
+      <div class="btn" onclick="navigate('→')">→</div>
+      <div class="btn" onclick="navigate('SELECT')">SELECT</div>
+      <div class="btn" onclick="navigate('↓')">↓</div>
+      <div class="btn" onclick="navigate('B')">B</div>
+    </div>
+    <div class="footer">Message • Gallery • Music • Tetris</div>
+  </div>
+
+  <script>
+    const pages = [
+`HAPPY BIRTHDAY!
+Press Start Button
+DOT MATRIX WITH STEREO SOUND
+BATTERY`, 
+
+`Heytml-Birthday
+Wish you a very happy birthday!
+Hope this little gift brings smile to your face 😊
+From: Your Friend`, 
+
+`[GALLERY]
+Coming Soon 🖼️
+Navigate with arrow keys
+to view photos`, 
+
+`[MUSIC]
+🎵 Press START to Play Song 🎵
+Press ↑ ↓ ← → to change track`, 
+
+`[TETRIS]
+Classic Tetris Coming Soon
+Use Arrow Keys to play!
+Press B to rotate block`
+    ];
+
+    let currentPage = 0;
+
+    function navigate(button) {
+      const display = document.getElementById("mainDisplay");
+      switch (button) {
+        case "START":
+          if (currentPage === 0) {
+            currentPage = 1;
+            typeWriter(pages[currentPage], 0, display);
+          } else if (currentPage === 1) {
+            alert("Start button pressed on message page!");
+          } else if (currentPage === 3) {
+            alert("Playing music...");
+          }
+          break;
+        case "SELECT":
+          currentPage = (currentPage + 1) % pages.length;
+          typeWriter(pages[currentPage], 0, display);
+          break;
+        case "↑":
+        case "↓":
+        case "←":
+        case "→":
+        case "B":
+          if (currentPage === 4 && button === "B") {
+            alert("Rotate Block");
+          } else if (currentPage === 3) {
+            alert("Changing Track");
+          } else if (currentPage === 2) {
+            alert("Viewing Next Photo");
+          }
+          break;
+      }
+    }
+
+    function typeWriter(text, i, element) {
+      if (i === 0) element.textContent = "";
+      if (i < text.length) {
+        element.textContent += text.charAt(i);
+        setTimeout(() => typeWriter(text, i + 1, element), 50);
+      }
+    }
+
+    // Load first page on start
+    window.onload = () => {
+      const display = document.getElementById("mainDisplay");
+      typeWriter(pages[currentPage], 0, display);
+    };
+  </script>
+
+</body>
+</html>
