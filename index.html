@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kejutan Ulang Tahun Retro!</title>
+    <title>Happy Birthday Sayangku!</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -145,11 +145,11 @@
     <audio id="main-audio-player" loop></audio>
 
     <div class="console-body">
-        <div class="console-top-bar"><div class="power-led"></div><div class="brand-name">NEXTIME-BOY</div><div></div></div>
+        <div class="console-top-bar"><div class="power-led"></div><div class="brand-name">OhMyHades</div><div></div></div>
         <div id="screen" class="screen-area">
             <div id="home-screen" class="screen-content active"><h1>Happy Birthday!</h1><p>Pilih menu di bawah</p></div>
             <div id="message-screen" class="screen-content"><h2 class="text-center text-lg mb-2">Pesan Untukmu</h2><div id="message-content" class="mb-2 text-sm"></div><button id="nextMessageBtn" class="nav-button btn-next">Selanjutnya</button><button id="skipMessageBtn" class="nav-button btn-skip">Lewati Semua</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
-            <div id="gallery-screen" class="screen-content"><h2 class="text-center text-lg mb-1">Galeri Foto</h2><p class="text-xs text-center mb-1">HEYML PHOTOSBOX</p><img id="galleryImage" src="asset/1.jpg" alt="Foto Galeri"><p id="galleryCounter" class="text-xs text-center my-1"></p><button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button><button id="printImageBtn" class="nav-button btn-skip">Mulai Cetak</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
+            <div id="gallery-screen" class="screen-content"><h2 class="text-center text-lg mb-1">Galeri Foto</h2><p class="text-xs text-center mb-1">Princes Area</p><img id="galleryImage" src="asset/1.jpg" alt="Foto Galeri"><p id="galleryCounter" class="text-xs text-center my-1"></p><button id="nextImageBtn" class="nav-button btn-next">Selanjutnya</button>><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
             <div id="music-screen" class="screen-content music-player"><h2 class="text-center text-lg mb-1">Pemutar Musik</h2><img id="albumArt" src="https://placehold.co/60x60/25392b/9effae?text=Art" alt="Album Art"><div id="songTitle" class="song-title">Lagu Pilihan</div><div id="songArtist" class="song-artist">Artisnya</div><div class="progress-bar"><div id="musicProgress" class="progress"></div></div><div class="controls"><button id="prevSongBtn"><i class="fas fa-backward"></i></button><button id="playPauseBtn"><i class="fas fa-play"></i></button><button id="nextSongBtn"><i class="fas fa-forward"></i></button></div><div class="playlist" id="playlistContainer"></div><button onclick="showScreen('home-screen')" class="nav-button btn-back mt-2">Kembali</button></div>
             <div id="tetris-screen" class="screen-content"><div class="flex justify-between text-xs mb-1"><span>SKOR: <span id="tetrisScore">0</span></span><span>LEVEL: <span id="tetrisLevel">1</span></span></div><div class="flex justify-between text-xs mb-1"><span>GARIS: <span id="tetrisLines">0</span></span></div><div id="tetris-grid"></div><div class="tetris-controls text-center"><button id="tetrisLeftBtn">&lt;</button><button id="tetrisRotateBtn">ROTASI</button><button id="tetrisRightBtn">&gt;</button></div><button id="tetrisStartBtn" class="nav-button start-game-btn">MULAI GAME</button><button onclick="showScreen('home-screen')" class="nav-button btn-back">Kembali</button></div>
         </div>
@@ -174,10 +174,8 @@
     // --- Konfigurasi Playlist Muzik (Fail Lokal) ---
     // GANTIKAN DENGAN PATH KE FAIL MUZIK DAN GAMBAR ANDA DI DALAM FOLDER 'asset/'
     const musicPlaylist = [
-        { src: "asset/on-bended-knee.mp3", title: "On Bended Knee", artist: "Boyz II Men", artwork: "asset/art1.jpg" },
-        { src: "asset/nothings-gonna-change.mp3", title: "Nothing's Gonna Change...", artist: "George Benson", artwork: "asset/art2.jpg" },
-        { src: "asset/ill-make-love.mp3", title: "I'll Make Love To You", artist: "Boyz II Men", artwork: "asset/art3.jpg" },
-        { src: "asset/vitamin-u.mp3", title: "VITAMIN U", artist: "Paul Partohap", artwork: "asset/art4.jpg" },
+        { src: "assets/Paul_Partohap_VITAMIN.mp3", title: "Vitamin U", artist: "Paul", artwork: "assets/1.jpg" },
+        
     ];
     let currentSongIndex = 0;
 
@@ -285,7 +283,7 @@
     }
 
     // --- Logik Mesej ---
-    const messages = [ "Hai Cei, Selamat Ulang Tahun ya!", "Semoga panjang umur, sehat selalu...", "Tambah dewasa, tambah bijaksana...", "Semua doa terbaik untukmu!", "Ini ada sedikit kejutan buat kamu...", "CIEEEE KEPO YAAA WKWKW", "Pokoknya, HAPPY BIRTHDAY!", "Jangan lupa traktirannya! ;)", "Udah ya, itu aja pesannya. Hehe." ];
+    const messages = [ "Hai Sayang, Selamat Ulang Tahun ya!", "Semoga panjang umur, sehat selalu...", "Tambah dewasa, tambah bijaksana...", "Semua doa terbaik untukmu!", "Ini ada sedikit kejutan buat kamu...", "CIEEEE KEPO YAAA WKWKW", "Pokoknya, HAPPY BIRTHDAY!", "I Love You! ;)", "Udah ya, itu aja pesannya. Hehe." ];
     let currentMessageIdx = 0;
     const messageContentEl = document.getElementById('message-content');
     const nextMessageBtn = document.getElementById('nextMessageBtn');
